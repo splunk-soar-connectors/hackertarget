@@ -23,8 +23,6 @@ from hackertarget_consts import *
 import requests, time
 import simplejson as json
 
-requests.packages.urllib3.disable_warnings()
-
 
 class HackerTargetConnector(BaseConnector):
 
