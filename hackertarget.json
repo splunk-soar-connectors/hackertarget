@@ -11,7 +11,7 @@
   "product_vendor": "HackerTarget",
   "product_name": "HackerTarget",
   "product_version_regex": ".*",
-  "min_phantom_version": "2.0.264",
+  "min_phantom_version": "3.0.190",
   "logo": "hackertarget-logo.png",
   "license": "Copyright (c) Phantom Cyber Corporation 2016",
   "configuration": {
