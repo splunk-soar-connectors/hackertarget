@@ -5,8 +5,8 @@
   "type": "information",
   "publisher": "Phantom",
   "main_module": "hackertarget_connector.pyc",
-    "app_version": "1.0.14",
-    "utctime_updated": "2017-08-10T00:30:49.000000Z",
+  "app_version": "1.0.15",
+  "utctime_updated": "2017-12-19T23:41:32.000000Z",
   "package_name": "phantom_hackertarget",
   "product_vendor": "HackerTarget",
   "product_name": "HackerTarget",
@@ -50,149 +50,152 @@
           ]
         }
       },
-		  "render": {
-		    "width": 12,
-		    "title": "Get Http Headers",
-		    "type": "table",
-		    "height": 5
-		  },
-		  "output": [
-		    {
-		      "data_path": "action_result.data.*.raw",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.P3P",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Date",
-		      "data_type": "string",
-	          "column_name": "date",
-	          "column_order": 7
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Server",
-		      "data_type": "string",
-	          "column_name": "server",
-	          "column_order": 6
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Location",
-		      "data_type": "string",
-	          "column_name": "URL",
-	          "column_order": 0,
-	          "contains": ["url"]
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Set-Cookie",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Content-Type",
-		      "data_type": "string",
-	          "column_name": "content type",
-	          "column_order": 5
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.http_version",
-		      "data_type": "string",
-	          "column_name": "http version",
-	          "column_order": 1
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Cache-Control",
-		      "data_type": "string",
-	          "column_name": "cache ctl",
-	          "column_order": 4
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.response_code",
-		      "data_type": "string",
-	          "column_name": "response code",
-	          "column_order": 2
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Content-Length",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.X-Frame-Options",
-		      "data_type": "string",
-	          "column_name": "xframe opt",
-	          "column_order": 8
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.X-XSS-Protection",
-		      "data_type": "string",
-	          "column_name": "xss protect",
-	          "column_order": 3
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Vary",
-		      "data_type": "string",
-	          "column_name": "vary",
-	          "column_order": 9
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Alt-Svc",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Expires",
-		      "data_type": "string",
-	          "column_name": "expires",
-	          "column_order": 10
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Accept-Ranges",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Transfer-Encoding",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.data.*.headers.*.Strict-Transport-Security",
-		      "data_type": "string",
-	          "column_name": "strict tsec",
-	          "column_order": 11
-		    },
-		    {
-		      "data_path": "action_result.status",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.message",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.summary.header_count",
-		      "data_type": "numeric"
-		    },
-		    {
-		      "data_path": "action_result.parameter.url",
-		      "data_type": "string",
-		      "contains": ["url"]
-		    },
-		    {
-		      "data_path": "action_result.parameter.context.guid",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.parameter.context.artifact_id",
-		      "data_type": "numeric"
-		    },
-		    {
-		      "data_path": "summary.total_objects",
-		      "data_type": "numeric"
-		    },
-		    {
-		      "data_path": "summary.total_objects_successful",
-		      "data_type": "numeric"
-		    }
-		  ]
-
+      "render": {
+        "width": 12,
+        "title": "Get Http Headers",
+        "type": "table",
+        "height": 5
+      },
+      "output": [
+        {
+          "data_path": "action_result.data.*.raw",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.P3P",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Date",
+          "data_type": "string",
+          "column_name": "date",
+          "column_order": 7
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Server",
+          "data_type": "string",
+          "column_name": "server",
+          "column_order": 6
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Location",
+          "data_type": "string",
+          "column_name": "URL",
+          "column_order": 0,
+          "contains": [
+            "url"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Set-Cookie",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Content-Type",
+          "data_type": "string",
+          "column_name": "content type",
+          "column_order": 5
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.http_version",
+          "data_type": "string",
+          "column_name": "http version",
+          "column_order": 1
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Cache-Control",
+          "data_type": "string",
+          "column_name": "cache ctl",
+          "column_order": 4
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.response_code",
+          "data_type": "string",
+          "column_name": "response code",
+          "column_order": 2
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Content-Length",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.X-Frame-Options",
+          "data_type": "string",
+          "column_name": "xframe opt",
+          "column_order": 8
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.X-XSS-Protection",
+          "data_type": "string",
+          "column_name": "xss protect",
+          "column_order": 3
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Vary",
+          "data_type": "string",
+          "column_name": "vary",
+          "column_order": 9
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Alt-Svc",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Expires",
+          "data_type": "string",
+          "column_name": "expires",
+          "column_order": 10
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Accept-Ranges",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Transfer-Encoding",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.headers.*.Strict-Transport-Security",
+          "data_type": "string",
+          "column_name": "strict tsec",
+          "column_order": 11
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary.header_count",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.parameter.url",
+          "data_type": "string",
+          "contains": [
+            "url"
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.context.guid",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.parameter.context.artifact_id",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric"
+        }
+      ]
     },
     {
       "action": "get links",
@@ -213,58 +216,62 @@
           ]
         }
       },
-		  "render": {
-		    "width": 12,
-		    "title": "Get Http Links",
-		    "type": "table",
-		    "height": 5
-		  },
-		  "output": [
-		    {
-		      "data_path": "action_result.data.*.raw",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.data.*.urls.*.url",
-		      "data_type": "string",
-	          "column_name": "URLS",
-	          "column_order": 0,
-		      "contains": ["url"]
-		    },
-		    {
-		      "data_path": "action_result.status",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.message",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.summary.total_urls",
-		      "data_type": "numeric"
-		    },
-		    {
-		      "data_path": "action_result.parameter.url",
-		      "data_type": "string",
-		      "contains": ["url"]
-		    },
-		    {
-		      "data_path": "action_result.parameter.context.guid",
-		      "data_type": "string"
-		    },
-		    {
-		      "data_path": "action_result.parameter.context.artifact_id",
-		      "data_type": "numeric"
-		    },
-		    {
-		      "data_path": "summary.total_objects",
-		      "data_type": "numeric"
-		    },
-		    {
-		      "data_path": "summary.total_objects_successful",
-		      "data_type": "numeric"
-		    }
-		  ]
+      "render": {
+        "width": 12,
+        "title": "Get Http Links",
+        "type": "table",
+        "height": 5
+      },
+      "output": [
+        {
+          "data_path": "action_result.data.*.raw",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.urls.*.url",
+          "data_type": "string",
+          "column_name": "URLS",
+          "column_order": 0,
+          "contains": [
+            "url"
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.summary.total_urls",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.parameter.url",
+          "data_type": "string",
+          "contains": [
+            "url"
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.context.guid",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.parameter.context.artifact_id",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric"
+        }
+      ]
     },
     {
       "action": "traceroute domain",
@@ -535,7 +542,8 @@
           "description": "Domain to query",
           "data_type": "string",
           "contains": [
-            "domain", "host name"
+            "domain",
+            "host name"
           ],
           "primary": true,
           "required": true,
@@ -840,7 +848,9 @@
         {
           "data_path": "action_result.data.*.OrgTechEmail",
           "data_type": "string",
-          "contains": ["email"]
+          "contains": [
+            "email"
+          ]
         },
         {
           "data_path": "action_result.data.*.OrgTechPhone",
@@ -853,7 +863,9 @@
         {
           "data_path": "action_result.data.*.OrgAbuseEmail",
           "data_type": "string",
-          "contains": ["email"]
+          "contains": [
+            "email"
+          ]
         },
         {
           "data_path": "action_result.data.*.OrgAbusePhone",
@@ -888,7 +900,9 @@
         {
           "data_path": "action_result.parameter.ip",
           "data_type": "string",
-          "contains": ["ip"],
+          "contains": [
+            "ip"
+          ],
           "column_name": "IP",
           "column_order": 0
         },
@@ -1084,7 +1098,9 @@
           "description": "Host FQDN such as www.hackertarget.com",
           "primary": true,
           "required": true,
-          "contains": ["domain"]
+          "contains": [
+            "domain"
+          ]
         }
       },
       "render": {
@@ -1169,7 +1185,9 @@
           "description": "Host ip",
           "primary": true,
           "required": true,
-          "contains": ["ip"]
+          "contains": [
+            "ip"
+          ]
         }
       },
       "render": {
