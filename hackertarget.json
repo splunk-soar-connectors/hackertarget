@@ -14,7 +14,7 @@
     "min_phantom_version": "3.0.190",
     "logo": "logo_hackertarget.svg",
     "logo_dark": "logo_hackertarget_dark.svg",
-    "license": "Copyright (c) Phantom Cyber Corporation 2016",
+    "license": "Copyright (c) Phantom Cyber Corporation, 2016-2018",
     "configuration": {
         "base_url": {
             "data_type": "string",
