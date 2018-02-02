@@ -181,14 +181,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
@@ -255,14 +247,6 @@
                     "contains": [
                         "url"
                     ]
-                },
-                {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -385,14 +369,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
@@ -512,14 +488,6 @@
                     "contains": [
                         "ip"
                     ]
-                },
-                {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -908,14 +876,6 @@
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
@@ -1064,14 +1024,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -1151,14 +1103,6 @@
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -1236,14 +1180,6 @@
                     ],
                     "column_name": "IP",
                     "column_order": 0
-                },
-                {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.summary",
@@ -1344,14 +1280,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -1448,14 +1376,6 @@
                     "contains": [
                         "domain"
                     ]
-                },
-                {
-                    "data_path": "action_result.parameter.context.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.context.artifact_id",
-                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.summary",
