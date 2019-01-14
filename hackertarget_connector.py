@@ -229,13 +229,8 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        if param.get('domain'):
-            request_params = {'q' : param.get('domain') }
-            endpoint = HACKERTARGET_REVERSEDNS_URI
-        else:
-            request_params = {'q' : param.get('ip')}
-            # endpoint = HACKERTARGET_REVERSEIP_URI - as of writing, reverse ip is busted, but can use reverse dns URI.
-            endpoint = HACKERTARGET_REVERSEIP_URI
+        request_params = {'q' : param.get('domain') }
+        endpoint = HACKERTARGET_REVERSEDNS_URI
 
         # Progress
         self.save_progress(USING_BASE_URL, base_url=self._base_url, api_uri=self._api_uri, endpoint=endpoint)
@@ -266,10 +261,7 @@ class HackerTargetConnector(BaseConnector):
                 tempresponse_data = {}
                 for line in (response):
                     #self.debug_print('Response line: {}'.format(line.split(' ')))
-                    if param.get('ip'):
-                        ipaddr = param.get('ip')
-                    else:
-                        ipaddr = line.split(',')[1]
+                    ipaddr = line.split(',')[1]
                     if ipaddr in tempresponse_data.keys():
                         tempresponse_data[ipaddr]['domain_names'].append(line.split(',')[0])
                         tempresponse_data[ipaddr]['domain_count'] += 1
