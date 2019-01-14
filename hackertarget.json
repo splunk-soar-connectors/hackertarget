@@ -1,7 +1,7 @@
 {
     "appid": "58130094-7f7d-40fe-9cc1-afad8c4669d0",
     "name": "HackerTarget",
-    "description": "This app supports executing investigative actions like 'traceroute', 'ping', 'whois ip', and 'whois domain' to analyze a host",
+    "description": "This app supports executing investigative actions to analyze a host",
     "type": "information",
     "publisher": "Phantom",
     "main_module": "hackertarget_connector.pyc",
