@@ -1,7 +1,7 @@
 {
     "appid": "58130094-7f7d-40fe-9cc1-afad8c4669d0",
     "name": "HackerTarget",
-    "description": "This app supports executing investigative actions like 'traceroute', 'ping', 'whois ip', and 'whois domain' to analyze a host.",
+    "description": "This app supports executing investigative actions like 'traceroute', 'ping', 'whois ip', and 'whois domain' to analyze a host",
     "type": "information",
     "publisher": "Phantom",
     "main_module": "hackertarget_connector.pyc",
@@ -11,9 +11,9 @@
     "product_vendor": "HackerTarget",
     "product_name": "HackerTarget",
     "product_version_regex": ".*",
-    "min_phantom_version": "3.0.190",
+    "min_phantom_version": "3.5.210",
     "logo": "hackertarget-logo.png",
-    "license": "Copyright (c) Phantom Cyber Corporation 2016",
+    "license": "Copyright (c) 2016-2019 Splunk Inc.",
     "configuration": {
         "base_url": {
             "data_type": "string",
