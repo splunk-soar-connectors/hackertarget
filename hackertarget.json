@@ -25,7 +25,7 @@
         "verify_server_cert": {
             "data_type": "boolean",
             "description": "Verify server certificate",
-            "required": true,
+            "required": false,
             "order": 1,
             "default": true
         }
@@ -618,7 +618,7 @@
             "read_only": true,
             "parameters": {
                 "ip": {
-                    "description": "Ip to query",
+                    "description": "IP to query",
                     "data_type": "string",
                     "contains": [
                         "ip"
@@ -707,7 +707,7 @@
             "read_only": true,
             "parameters": {
                 "ip": {
-                    "description": "Ip to query",
+                    "description": "IP to query",
                     "data_type": "string",
                     "contains": [
                         "ip"
@@ -719,7 +719,7 @@
             },
             "render": {
                 "width": 12,
-                "title": "Whois Ip",
+                "title": "Whois IP",
                 "type": "json",
                 "height": 5
             },
@@ -1204,7 +1204,7 @@
             },
             "render": {
                 "width": 12,
-                "title": "Ping Ip",
+                "title": "Ping IP",
                 "type": "table",
                 "height": 5
             },
@@ -1291,7 +1291,7 @@
             },
             "render": {
                 "width": 12,
-                "title": "Geolocate Ip",
+                "title": "Geolocate IP",
                 "type": "table",
                 "height": 5
             },
