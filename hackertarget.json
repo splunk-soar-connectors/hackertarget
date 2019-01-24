@@ -1,1475 +1,1487 @@
 {
-  "appid": "58130094-7f7d-40fe-9cc1-afad8c4669d0",
-  "name": "HackerTarget",
-  "description": "This app supports executing investigative actions like 'traceroute', 'ping', 'whois ip', and 'whois domain' to analyze a host.",
-  "type": "information",
-  "publisher": "Phantom",
-  "main_module": "hackertarget_connector.pyc",
-  "app_version": "1.0.17",
-  "utctime_updated": "2018-12-07T01:56:15.000000Z",
-  "package_name": "phantom_hackertarget",
-  "product_vendor": "HackerTarget",
-  "product_name": "HackerTarget",
-  "product_version_regex": ".*",
-  "min_phantom_version": "3.0.190",
-  "logo": "hackertarget-logo.png",
-  "license": "Copyright (c) Phantom Cyber Corporation 2016",
-  "configuration": {
-    "base_url": {
-      "data_type": "string",
-      "order": 0,
-      "description": "Base URL",
-      "default": "https://api.hackertarget.com/",
-      "required": false
+    "appid": "58130094-7f7d-40fe-9cc1-afad8c4669d0",
+    "name": "HackerTarget",
+    "description": "This app supports executing investigative actions to analyze a host",
+    "type": "information",
+    "publisher": "Phantom",
+    "main_module": "hackertarget_connector.pyc",
+    "app_version": "1.0.17",
+    "utctime_updated": "2018-12-07T01:56:15.000000Z",
+    "package_name": "phantom_hackertarget",
+    "product_vendor": "HackerTarget",
+    "product_name": "HackerTarget",
+    "product_version_regex": ".*",
+    "min_phantom_version": "3.5.210",
+    "logo": "hackertarget-logo.png",
+    "license": "Copyright (c) 2016-2019 Splunk Inc.",
+    "configuration": {
+        "base_url": {
+            "data_type": "string",
+            "order": 0,
+            "description": "Base URL",
+            "default": "https://api.hackertarget.com/",
+            "required": false
+        },
+        "verify_server_cert": {
+            "data_type": "boolean",
+            "description": "Verify server certificate",
+            "required": false,
+            "order": 1,
+            "default": true
+        }
     },
-    "verify_server_cert": {
-      "data_type": "boolean",
-      "description": "Verify server certificate",
-      "required": true,
-      "order": 1,
-      "default": true
-    }
-  },
-  "actions": [
-    {
-      "action": "get headers",
-      "description": "Get HTTP Headers from a URL",
-      "type": "investigate",
-      "identifier": "get_headers",
-      "read_only": true,
-      "versions": "EQ(*)",
-      "parameters": {
-        "url": {
-          "data_type": "string",
-          "order": 0,
-          "description": "URL ie. http://www.hackertarget.com",
-          "primary": true,
-          "required": true,
-          "contains": [
-            "url"
-          ]
+    "actions": [
+        {
+            "action": "get headers",
+            "description": "Get HTTP Headers from a URL",
+            "type": "investigate",
+            "identifier": "get_headers",
+            "read_only": true,
+            "versions": "EQ(*)",
+            "parameters": {
+                "url": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "URL ie. http://www.hackertarget.com",
+                    "primary": true,
+                    "required": true,
+                    "contains": [
+                        "url"
+                    ]
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Get Http Headers",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.P3P",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Date",
+                    "data_type": "string",
+                    "column_name": "date",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Server",
+                    "data_type": "string",
+                    "column_name": "server",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Location",
+                    "data_type": "string",
+                    "column_name": "URL",
+                    "column_order": 0,
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Set-Cookie",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Content-Type",
+                    "data_type": "string",
+                    "column_name": "content type",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.http_version",
+                    "data_type": "string",
+                    "column_name": "http version",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Cache-Control",
+                    "data_type": "string",
+                    "column_name": "cache ctl",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.response_code",
+                    "data_type": "string",
+                    "column_name": "response code",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Content-Length",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.X-Frame-Options",
+                    "data_type": "string",
+                    "column_name": "xframe opt",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.X-XSS-Protection",
+                    "data_type": "string",
+                    "column_name": "xss protect",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Vary",
+                    "data_type": "string",
+                    "column_name": "vary",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Alt-Svc",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Expires",
+                    "data_type": "string",
+                    "column_name": "expires",
+                    "column_order": 10
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Accept-Ranges",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Transfer-Encoding",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Strict-Transport-Security",
+                    "data_type": "string",
+                    "column_name": "strict tsec",
+                    "column_order": 11
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.header_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ]
+        },
+        {
+            "action": "get links",
+            "description": "Get HTTP Links from a URL",
+            "type": "investigate",
+            "identifier": "get_links",
+            "read_only": true,
+            "versions": "EQ(*)",
+            "parameters": {
+                "url": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "URL ie. http://www.hackertarget.com",
+                    "primary": true,
+                    "required": true,
+                    "contains": [
+                        "url"
+                    ]
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Get Http Links",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.urls.*.url",
+                    "data_type": "string",
+                    "column_name": "URLS",
+                    "column_order": 0,
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_urls",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ]
+        },
+        {
+            "action": "traceroute domain",
+            "description": "Traceroute to a domain",
+            "type": "investigate",
+            "identifier": "traceroute_domain",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "Host FQDN ie. www.hackertarget.com",
+                    "primary": true,
+                    "required": true,
+                    "contains": [
+                        "domain"
+                    ]
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Traceroute IP",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.hop.*.avg",
+                    "data_type": "string",
+                    "column_name": "Average",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.hop",
+                    "data_type": "string",
+                    "column_name": "Hop",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.best",
+                    "data_type": "string",
+                    "column_name": "Best",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.host",
+                    "data_type": "string",
+                    "contains": [
+                        "domain",
+                        "ip"
+                    ],
+                    "column_name": "Host",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.last",
+                    "data_type": "string",
+                    "column_name": "Last",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.loss",
+                    "data_type": "string",
+                    "column_name": "Loss",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.sent",
+                    "data_type": "string",
+                    "column_name": "Sent",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.stdev",
+                    "data_type": "string",
+                    "column_name": "Std_Dev",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.worst",
+                    "data_type": "string",
+                    "column_name": "Worst",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_hops",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "traceroute ip",
+            "description": "Traceroute to an ip",
+            "type": "investigate",
+            "identifier": "traceroute_ip",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "Host ip",
+                    "primary": true,
+                    "required": true,
+                    "contains": [
+                        "ip"
+                    ]
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Traceroute IP",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.hop.*.avg",
+                    "data_type": "string",
+                    "column_name": "Average",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.hop",
+                    "data_type": "string",
+                    "column_name": "Hop",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.best",
+                    "data_type": "string",
+                    "column_name": "Best",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.host",
+                    "data_type": "string",
+                    "contains": [
+                        "domain",
+                        "ip"
+                    ],
+                    "column_name": "Host",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.last",
+                    "data_type": "string",
+                    "column_name": "Last",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.loss",
+                    "data_type": "string",
+                    "column_name": "Loss",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.sent",
+                    "data_type": "string",
+                    "column_name": "Sent",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.stdev",
+                    "data_type": "string",
+                    "column_name": "Std_Dev",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.hop.*.worst",
+                    "data_type": "string",
+                    "column_name": "Worst",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_hops",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "reverse domain",
+            "description": "Find IPs that resolve to this domain",
+            "type": "investigate",
+            "identifier": "reverse_domain",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "description": "Domain to query",
+                    "data_type": "string",
+                    "contains": [
+                        "domain",
+                        "host name"
+                    ],
+                    "primary": true,
+                    "required": true,
+                    "order": 0
+                }
+            },
+            "render": {
+                "type": "table",
+                "width": 12,
+                "height": 5,
+                "title": "Reverse Domain"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.ip_addresses.*.ip_address",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "Related IPs",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.ip_addresses.*.domain_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.ip_addresses.*.domain_names",
+                    "data_type": "string",
+                    "column_name": "Related Domain Names",
+                    "column_order": 2,
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain",
+                        "host name"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "reverse ip",
+            "description": "Find domains that resolve to this ip",
+            "type": "investigate",
+            "identifier": "reverse_ip",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "description": "IP to query",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "primary": true,
+                    "required": true,
+                    "order": 0
+                }
+            },
+            "render": {
+                "type": "table",
+                "width": 12,
+                "height": 5,
+                "title": "Reverse IP"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.domain",
+                    "data_type": "string",
+                    "example_values": [
+                        "splunk.com"
+                    ],
+                    "contains": [
+                        "ip",
+                        "domain"
+                    ],
+                    "column_order": 0,
+                    "column_name": "Related Domains"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Total domains: 458"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "example_values": [
+                        "2.2.2.2"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_domains",
+                    "data_type": "numeric",
+                    "example_values": [
+                        458
+                    ],
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "whois ip",
+            "description": "Execute a whois lookup on the given IP",
+            "type": "investigate",
+            "identifier": "whois_ip",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "description": "IP to query",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "primary": true,
+                    "required": true,
+                    "order": 0
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Whois IP",
+                "type": "json",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.Ref",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.CIDR",
+                    "data_type": "string",
+                    "column_name": "cidr",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.City",
+                    "data_type": "string",
+                    "column_name": "city",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.OrgId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Parent",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Address",
+                    "data_type": "string",
+                    "column_name": "address",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.Comment",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Country",
+                    "data_type": "string",
+                    "column_name": "country",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.NetName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.NetType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgName",
+                    "data_type": "string",
+                    "column_name": "org name",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.RegDate",
+                    "data_type": "string",
+                    "column_name": "reg date",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.Updated",
+                    "data_type": "string",
+                    "column_name": "updated",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.NetRange",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OriginAS",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.NetHandle",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgNOCRef",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.StateProv",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgNOCName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgTechRef",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.PostalCode",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgAbuseRef",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgNOCEmail",
+                    "data_type": "string",
+                    "column_name": "abuse email",
+                    "column_order": 9,
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.OrgNOCPhone",
+                    "data_type": "string",
+                    "column_name": "abuse phone",
+                    "column_order": 10
+                },
+                {
+                    "data_path": "action_result.data.*.OrgTechName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgAbuseName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgNOCHandle",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgTechEmail",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.OrgTechPhone",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Organization",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgAbuseEmail",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.OrgAbusePhone",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgTechHandle",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.#_available_at",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.OrgAbuseHandle",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "IP",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "whois domain",
+            "description": "Execute a whois lookup on the given domain",
+            "type": "investigate",
+            "identifier": "whois_domain",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "description": "Domain to query",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ],
+                    "primary": true,
+                    "required": true,
+                    "order": 0
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Whois Domain",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.DNSSEC",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.NOTICE",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.Registrar",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Domain_Name",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ],
+                    "column_name": "Domain",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.Name_Server",
+                    "data_type": "string",
+                    "column_name": "Name Server",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.Please_note",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Referral_URL",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Updated_Date",
+                    "data_type": "string",
+                    "column_name": "Updated Date",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.Whois_Server",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.Creation_Date",
+                    "data_type": "string",
+                    "column_name": "Creation Date",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.Registrar_URL",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.Expiration_Date",
+                    "data_type": "string",
+                    "column_name": "Expiration Date",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.Registrant_Name",
+                    "data_type": "string",
+                    "column_name": "Registrant Name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.Registrant_Organization",
+                    "data_type": "string",
+                    "column_name": "Registrant Org",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.Sponsoring_Registrar_IANA_ID",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.>>>_Last_update_of_whois_database",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "ping domain",
+            "description": "Ping a domain",
+            "type": "investigate",
+            "identifier": "ping_domain",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "Host FQDN such as www.hackertarget.com",
+                    "primary": true,
+                    "required": true,
+                    "contains": [
+                        "domain"
+                    ]
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Ping Domain",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.sent",
+                    "data_type": "string",
+                    "column_name": "sent",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.failed",
+                    "data_type": "string",
+                    "column_name": "failed",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.succeeded",
+                    "data_type": "string",
+                    "column_name": "succeeded",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ],
+                    "column_name": "Domain",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "ping ip",
+            "description": "Ping an ip",
+            "type": "investigate",
+            "identifier": "ping_ip",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "Host ip",
+                    "primary": true,
+                    "required": true,
+                    "contains": [
+                        "ip"
+                    ]
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Ping IP",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.sent",
+                    "data_type": "string",
+                    "column_name": "sent",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.failed",
+                    "data_type": "string",
+                    "column_name": "failed",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.succeeded",
+                    "data_type": "string",
+                    "column_name": "succeeded",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "IP",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "geolocate ip",
+            "description": "Geolocate an ip",
+            "type": "investigate",
+            "identifier": "geolocate_ip",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "Host ip",
+                    "primary": true,
+                    "required": true,
+                    "contains": [
+                        "ip"
+                    ]
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Geolocate IP",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.latitude",
+                    "data_type": "string",
+                    "column_name": "latitude",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.city_name",
+                    "data_type": "string",
+                    "column_name": "city name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.longitude",
+                    "data_type": "string",
+                    "column_name": "longitude",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ip",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.state_name",
+                    "data_type": "string",
+                    "column_name": "state",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.country_name",
+                    "data_type": "string",
+                    "column_name": "country",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "geolocate domain",
+            "description": "Geolocate a domain",
+            "type": "investigate",
+            "identifier": "geolocate_domain",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "Host fqdn ie. www.hackertarget.com",
+                    "primary": true,
+                    "required": true,
+                    "contains": [
+                        "domain"
+                    ]
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Geolocate Domain",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.latitude",
+                    "data_type": "string",
+                    "column_name": "latitude",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.city_name",
+                    "data_type": "string",
+                    "column_name": "city name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.longitude",
+                    "data_type": "string",
+                    "column_name": "longitude",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ip",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.state_name",
+                    "data_type": "string",
+                    "column_name": "state",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.country_name",
+                    "data_type": "string",
+                    "column_name": "country",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
         }
-      },
-      "render": {
-        "width": 12,
-        "title": "Get Http Headers",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.P3P",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Date",
-          "data_type": "string",
-          "column_name": "date",
-          "column_order": 7
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Server",
-          "data_type": "string",
-          "column_name": "server",
-          "column_order": 6
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Location",
-          "data_type": "string",
-          "column_name": "URL",
-          "column_order": 0,
-          "contains": [
-            "url"
-          ]
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Set-Cookie",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Content-Type",
-          "data_type": "string",
-          "column_name": "content type",
-          "column_order": 5
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.http_version",
-          "data_type": "string",
-          "column_name": "http version",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Cache-Control",
-          "data_type": "string",
-          "column_name": "cache ctl",
-          "column_order": 4
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.response_code",
-          "data_type": "string",
-          "column_name": "response code",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Content-Length",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.X-Frame-Options",
-          "data_type": "string",
-          "column_name": "xframe opt",
-          "column_order": 8
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.X-XSS-Protection",
-          "data_type": "string",
-          "column_name": "xss protect",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Vary",
-          "data_type": "string",
-          "column_name": "vary",
-          "column_order": 9
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Alt-Svc",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Expires",
-          "data_type": "string",
-          "column_name": "expires",
-          "column_order": 10
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Accept-Ranges",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Transfer-Encoding",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.headers.*.Strict-Transport-Security",
-          "data_type": "string",
-          "column_name": "strict tsec",
-          "column_order": 11
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.summary.header_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.parameter.url",
-          "data_type": "string",
-          "contains": [
-            "url"
-          ]
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ]
-    },
-    {
-      "action": "get links",
-      "description": "Get HTTP Links from a URL",
-      "type": "investigate",
-      "identifier": "get_links",
-      "read_only": true,
-      "versions": "EQ(*)",
-      "parameters": {
-        "url": {
-          "data_type": "string",
-          "order": 0,
-          "description": "URL ie. http://www.hackertarget.com",
-          "primary": true,
-          "required": true,
-          "contains": [
-            "url"
-          ]
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Get Http Links",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.urls.*.url",
-          "data_type": "string",
-          "column_name": "URLS",
-          "column_order": 0,
-          "contains": [
-            "url"
-          ]
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.summary.total_urls",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.parameter.url",
-          "data_type": "string",
-          "contains": [
-            "url"
-          ]
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ]
-    },
-    {
-      "action": "traceroute domain",
-      "description": "Traceroute to a domain",
-      "type": "investigate",
-      "identifier": "traceroute_domain",
-      "read_only": true,
-      "parameters": {
-        "domain": {
-          "data_type": "string",
-          "order": 0,
-          "description": "Host FQDN ie. www.hackertarget.com",
-          "primary": true,
-          "required": true,
-          "contains": [
-            "domain"
-          ]
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Traceroute IP",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.hop.*.avg",
-          "data_type": "string",
-          "column_name": "Average",
-          "column_order": 5
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.hop",
-          "data_type": "string",
-          "column_name": "Hop",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.best",
-          "data_type": "string",
-          "column_name": "Best",
-          "column_order": 6
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.host",
-          "data_type": "string",
-          "contains": [
-            "domain",
-            "ip"
-          ],
-          "column_name": "Host",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.last",
-          "data_type": "string",
-          "column_name": "Last",
-          "column_order": 4
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.loss",
-          "data_type": "string",
-          "column_name": "Loss",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.sent",
-          "data_type": "string",
-          "column_name": "Sent",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.stdev",
-          "data_type": "string",
-          "column_name": "Std_Dev",
-          "column_order": 8
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.worst",
-          "data_type": "string",
-          "column_name": "Worst",
-          "column_order": 7
-        },
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.summary.total_hops",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.parameter.domain",
-          "data_type": "string",
-          "contains": [
-            "domain"
-          ]
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "traceroute ip",
-      "description": "Traceroute to an ip",
-      "type": "investigate",
-      "identifier": "traceroute_ip",
-      "read_only": true,
-      "parameters": {
-        "ip": {
-          "data_type": "string",
-          "order": 0,
-          "description": "Host ip",
-          "primary": true,
-          "required": true,
-          "contains": [
-            "ip"
-          ]
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Traceroute IP",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.hop.*.avg",
-          "data_type": "string",
-          "column_name": "Average",
-          "column_order": 5
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.hop",
-          "data_type": "string",
-          "column_name": "Hop",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.best",
-          "data_type": "string",
-          "column_name": "Best",
-          "column_order": 6
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.host",
-          "data_type": "string",
-          "contains": [
-            "domain",
-            "ip"
-          ],
-          "column_name": "Host",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.last",
-          "data_type": "string",
-          "column_name": "Last",
-          "column_order": 4
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.loss",
-          "data_type": "string",
-          "column_name": "Loss",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.sent",
-          "data_type": "string",
-          "column_name": "Sent",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.stdev",
-          "data_type": "string",
-          "column_name": "Std_Dev",
-          "column_order": 8
-        },
-        {
-          "data_path": "action_result.data.*.hop.*.worst",
-          "data_type": "string",
-          "column_name": "Worst",
-          "column_order": 7
-        },
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.summary.total_hops",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.parameter.ip",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ]
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "reverse domain",
-      "description": "Find IPs that resolve to this domain",
-      "type": "investigate",
-      "identifier": "reverse_domain",
-      "read_only": true,
-      "parameters": {
-        "domain": {
-          "description": "Domain to query",
-          "data_type": "string",
-          "contains": [
-            "domain",
-            "host name"
-          ],
-          "primary": true,
-          "required": true,
-          "order": 0
-        }
-      },
-      "render": {
-        "type": "table",
-        "width": 12,
-        "height": 5,
-        "title": "Reverse Domain"
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.ip_addresses.*.ip_address",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ],
-          "column_name": "IP",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.ip_addresses.*.domain_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.ip_addresses.*.domain_names",
-          "data_type": "string",
-          "column_name": "Related Domain Names",
-          "column_order": 2,
-          "contains": [
-            "domain"
-          ]
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.domain",
-          "data_type": "string",
-          "contains": [
-            "domain",
-            "host name"
-          ]
-        },
-        {
-          "data_path": "action_result.summary",
-          "data_type": "string"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "reverse ip",
-      "description": "Find domains that resolve to this ip",
-      "type": "investigate",
-      "identifier": "reverse_ip",
-      "read_only": true,
-      "parameters": {
-        "ip": {
-          "description": "Ip to query",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ],
-          "primary": true,
-          "required": true,
-          "order": 0
-        }
-      },
-      "render": {
-        "type": "table",
-        "width": 12,
-        "height": 5,
-        "title": "Reverse IP"
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.ip_addresses.*.ip_address",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ],
-          "column_name": "IP",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.ip_addresses.*.domain_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.ip_addresses.*.domain_names",
-          "data_type": "string",
-          "column_name": "Related Domain Names",
-          "column_order": 2,
-          "contains": [
-            "domain"
-          ]
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.ip",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ]
-        },
-        {
-          "data_path": "action_result.summary",
-          "data_type": "string"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "whois ip",
-      "description": "Execute a whois lookup on the given IP",
-      "type": "investigate",
-      "identifier": "whois_ip",
-      "read_only": true,
-      "parameters": {
-        "ip": {
-          "description": "Ip to query",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ],
-          "primary": true,
-          "required": true,
-          "order": 0
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Whois Ip",
-        "type": "json",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.Ref",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.CIDR",
-          "data_type": "string",
-          "column_name": "cidr",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.City",
-          "data_type": "string",
-          "column_name": "city",
-          "column_order": 4
-        },
-        {
-          "data_path": "action_result.data.*.OrgId",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.Parent",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.Address",
-          "data_type": "string",
-          "column_name": "address",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.Comment",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.Country",
-          "data_type": "string",
-          "column_name": "country",
-          "column_order": 5
-        },
-        {
-          "data_path": "action_result.data.*.NetName",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.NetType",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgName",
-          "data_type": "string",
-          "column_name": "org name",
-          "column_order": 6
-        },
-        {
-          "data_path": "action_result.data.*.RegDate",
-          "data_type": "string",
-          "column_name": "reg date",
-          "column_order": 7
-        },
-        {
-          "data_path": "action_result.data.*.Updated",
-          "data_type": "string",
-          "column_name": "updated",
-          "column_order": 8
-        },
-        {
-          "data_path": "action_result.data.*.NetRange",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OriginAS",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.NetHandle",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgNOCRef",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.StateProv",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgNOCName",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgTechRef",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.PostalCode",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgAbuseRef",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgNOCEmail",
-          "data_type": "string",
-          "column_name": "abuse email",
-          "column_order": 9,
-          "contains": [
-            "email"
-          ]
-        },
-        {
-          "data_path": "action_result.data.*.OrgNOCPhone",
-          "data_type": "string",
-          "column_name": "abuse phone",
-          "column_order": 10
-        },
-        {
-          "data_path": "action_result.data.*.OrgTechName",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgAbuseName",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgNOCHandle",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgTechEmail",
-          "data_type": "string",
-          "contains": [
-            "email"
-          ]
-        },
-        {
-          "data_path": "action_result.data.*.OrgTechPhone",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.Organization",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgAbuseEmail",
-          "data_type": "string",
-          "contains": [
-            "email"
-          ]
-        },
-        {
-          "data_path": "action_result.data.*.OrgAbusePhone",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgTechHandle",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.#_available_at",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.OrgAbuseHandle",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string",
-          "column_name": "status",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.summary",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.ip",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ],
-          "column_name": "IP",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "whois domain",
-      "description": "Execute a whois lookup on the given domain",
-      "type": "investigate",
-      "identifier": "whois_domain",
-      "read_only": true,
-      "parameters": {
-        "domain": {
-          "description": "Domain to query",
-          "data_type": "string",
-          "contains": [
-            "domain"
-          ],
-          "primary": true,
-          "required": true,
-          "order": 0
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Whois Domain",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.DNSSEC",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.NOTICE",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.Status",
-          "data_type": "string",
-          "column_name": "Status",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.Registrar",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.Domain_Name",
-          "data_type": "string",
-          "contains": [
-            "domain"
-          ],
-          "column_name": "Domain",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.data.*.Name_Server",
-          "data_type": "string",
-          "column_name": "Name Server",
-          "column_order": 7
-        },
-        {
-          "data_path": "action_result.data.*.Please_note",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.Referral_URL",
-          "data_type": "string",
-          "contains": [
-            "url"
-          ]
-        },
-        {
-          "data_path": "action_result.data.*.Updated_Date",
-          "data_type": "string",
-          "column_name": "Updated Date",
-          "column_order": 6
-        },
-        {
-          "data_path": "action_result.data.*.Whois_Server",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.Creation_Date",
-          "data_type": "string",
-          "column_name": "Creation Date",
-          "column_order": 4
-        },
-        {
-          "data_path": "action_result.data.*.Registrar_URL",
-          "data_type": "string",
-          "contains": [
-            "url"
-          ]
-        },
-        {
-          "data_path": "action_result.data.*.Expiration_Date",
-          "data_type": "string",
-          "column_name": "Expiration Date",
-          "column_order": 5
-        },
-        {
-          "data_path": "action_result.data.*.Registrant_Name",
-          "data_type": "string",
-          "column_name": "Registrant Name",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.Registrant_Organization",
-          "data_type": "string",
-          "column_name": "Registrant Org",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.Sponsoring_Registrar_IANA_ID",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.>>>_Last_update_of_whois_database",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.domain",
-          "data_type": "string",
-          "contains": [
-            "domain"
-          ]
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.summary",
-          "data_type": "string"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "ping domain",
-      "description": "Ping a domain",
-      "type": "investigate",
-      "identifier": "ping_domain",
-      "read_only": true,
-      "parameters": {
-        "domain": {
-          "data_type": "string",
-          "order": 0,
-          "description": "Host FQDN such as www.hackertarget.com",
-          "primary": true,
-          "required": true,
-          "contains": [
-            "domain"
-          ]
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Ping Domain",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.sent",
-          "data_type": "string",
-          "column_name": "sent",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.failed",
-          "data_type": "string",
-          "column_name": "failed",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.succeeded",
-          "data_type": "string",
-          "column_name": "succeeded",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.domain",
-          "data_type": "string",
-          "contains": [
-            "domain"
-          ],
-          "column_name": "Domain",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.summary",
-          "data_type": "string"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "ping ip",
-      "description": "Ping an ip",
-      "type": "investigate",
-      "identifier": "ping_ip",
-      "read_only": true,
-      "parameters": {
-        "ip": {
-          "data_type": "string",
-          "order": 0,
-          "description": "Host ip",
-          "primary": true,
-          "required": true,
-          "contains": [
-            "ip"
-          ]
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Ping Ip",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.sent",
-          "data_type": "string",
-          "column_name": "sent",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.failed",
-          "data_type": "string",
-          "column_name": "failed",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.succeeded",
-          "data_type": "string",
-          "column_name": "succeeded",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.ip",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ],
-          "column_name": "IP",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.summary",
-          "data_type": "string"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "geolocate ip",
-      "description": "Geolocate an ip",
-      "type": "investigate",
-      "identifier": "geolocate_ip",
-      "read_only": true,
-      "parameters": {
-        "ip": {
-          "data_type": "string",
-          "order": 0,
-          "description": "Host ip",
-          "primary": true,
-          "required": true,
-          "contains": [
-            "ip"
-          ]
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Geolocate Ip",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.latitude",
-          "data_type": "string",
-          "column_name": "latitude",
-          "column_order": 4
-        },
-        {
-          "data_path": "action_result.data.*.city_name",
-          "data_type": "string",
-          "column_name": "city name",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.longitude",
-          "data_type": "string",
-          "column_name": "longitude",
-          "column_order": 5
-        },
-        {
-          "data_path": "action_result.data.*.ip",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ],
-          "column_name": "ip",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.data.*.state_name",
-          "data_type": "string",
-          "column_name": "state",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.country_name",
-          "data_type": "string",
-          "column_name": "country",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.ip",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ]
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.summary",
-          "data_type": "string"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "geolocate domain",
-      "description": "Geolocate a domain",
-      "type": "investigate",
-      "identifier": "geolocate_domain",
-      "read_only": true,
-      "parameters": {
-        "domain": {
-          "data_type": "string",
-          "order": 0,
-          "description": "Host fqdn ie. www.hackertarget.com",
-          "primary": true,
-          "required": true,
-          "contains": [
-            "domain"
-          ]
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Geolocate Domain",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.raw",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.latitude",
-          "data_type": "string",
-          "column_name": "latitude",
-          "column_order": 4
-        },
-        {
-          "data_path": "action_result.data.*.city_name",
-          "data_type": "string",
-          "column_name": "city name",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.longitude",
-          "data_type": "string",
-          "column_name": "longitude",
-          "column_order": 5
-        },
-        {
-          "data_path": "action_result.data.*.ip",
-          "data_type": "string",
-          "contains": [
-            "ip"
-          ],
-          "column_name": "ip",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.data.*.state_name",
-          "data_type": "string",
-          "column_name": "state",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.country_name",
-          "data_type": "string",
-          "column_name": "country",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.domain",
-          "data_type": "string",
-          "contains": [
-            "domain"
-          ]
-        },
-        {
-          "data_path": "action_result.parameter.context.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.context.artifact_id",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.summary",
-          "data_type": "string"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    }
-  ]
+    ]
 }

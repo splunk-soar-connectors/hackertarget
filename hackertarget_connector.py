@@ -1,16 +1,8 @@
-# --
 # File: hackertarget_connector.py
+# Copyright (c) 2016-2019 Splunk Inc.
 #
-# Copyright (c) Phantom Cyber Corporation, 2016
-#
-# This unpublished material is proprietary to Phantom Cyber.
-# All rights reserved. The methods and
-# techniques described herein are considered trade secrets
-# and/or confidential. Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of Phantom Cyber.
-#
-# --
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+# without a valid written license from Splunk Inc. is PROHIBITED.
 
 # Phantom imports
 import phantom.app as phantom
@@ -208,11 +200,11 @@ class HackerTargetConnector(BaseConnector):
                         response_data['ip'] = linedata[1].strip()
                     else:
                         response_data[linedata[0].strip().lower().replace(' ', '_')] = linedata[1].strip()
-    
+
                 # Set the summary and response data
                 action_result.add_data(response_data)
                 # action_result.set_summary({ 'total_hops': len(response_data)})
-    
+
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
@@ -229,13 +221,8 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        if param.get('domain'):
-            request_params = {'q' : param.get('domain') }
-            endpoint = HACKERTARGET_REVERSEDNS_URI
-        else:
-            request_params = {'q' : param.get('ip')}
-            # endpoint = HACKERTARGET_REVERSEIP_URI - as of writing, reverse ip is busted, but can use reverse dns URI.
-            endpoint = HACKERTARGET_REVERSEDNS_URI
+        request_params = {'q' : param.get('domain') }
+        endpoint = HACKERTARGET_REVERSEDNS_URI
 
         # Progress
         self.save_progress(USING_BASE_URL, base_url=self._base_url, api_uri=self._api_uri, endpoint=endpoint)
@@ -253,7 +240,7 @@ class HackerTargetConnector(BaseConnector):
         """
         Oh, domaintools datapaths:
         action_result.data.*.ip_addresses.*.ip_address    string    ip
-        action_result.data.*.ip_addresses.*.domain_count    numeric    
+        action_result.data.*.ip_addresses.*.domain_count    numeric
         action_result.data.*.ip_addresses.*.domain_names    string    domain
         """
         if ret_val:
@@ -266,12 +253,12 @@ class HackerTargetConnector(BaseConnector):
                 tempresponse_data = {}
                 for line in (response):
                     #self.debug_print('Response line: {}'.format(line.split(' ')))
-                    ipaddr = line.split(' ')[0]
+                    ipaddr = line.split(',')[1]
                     if ipaddr in tempresponse_data.keys():
-                        tempresponse_data[ipaddr]['domain_names'].append(line.split(' ')[1])
+                        tempresponse_data[ipaddr]['domain_names'].append(line.split(',')[0])
                         tempresponse_data[ipaddr]['domain_count'] += 1
                     else:
-                        tempresponse_data[ipaddr] = { 'ip_address' : ipaddr, 'domain_names' : [line.split(' ')[1]], 'domain_count' : 1 }
+                        tempresponse_data[ipaddr] = { 'ip_address' : ipaddr, 'domain_names' : [line.split(',')[0]], 'domain_count' : 1 }
                 domain_count_total = 0
                 for ipaddr in tempresponse_data.keys():
                     response_data['ip_addresses'].append(tempresponse_data[ipaddr])
@@ -279,7 +266,63 @@ class HackerTargetConnector(BaseConnector):
                 # Set the summary and response data
                 action_result.add_data(response_data)
                 action_result.set_summary({ 'total_domains': domain_count_total, 'total_ips': len(tempresponse_data.keys())})
-    
+
+                # Set the Status
+                return action_result.set_status(phantom.APP_SUCCESS)
+        else:
+            return phantom.APP_ERROR
+
+    def _reverse_ip(self, param):
+        """ Action handler for the '_reverse_ip' action"""
+
+        # This is an action that needs to be represented by the ActionResult object
+        # So create one and add it to 'self' (i.e. add it to the BaseConnector)
+        # When the action_result is created this way, the parameter is also passed.
+        # Other things like the summary, data and status is set later on.
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # parameters here
+        # host - hostname; required.
+        request_params = {'q' : param.get('ip')}
+        # endpoint = HACKERTARGET_REVERSEIP_URI - as of writing, reverse ip is busted, but can use reverse dns URI.
+        endpoint = HACKERTARGET_REVERSEIP_URI
+
+        # Progress
+        self.save_progress(USING_BASE_URL, base_url=self._base_url, api_uri=self._api_uri, endpoint=endpoint)
+
+        # Connectivity
+        self.save_progress(phantom.APP_PROG_CONNECTING_TO_ELLIPSES, self._host)
+
+        # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
+        # unless specified start a new as above.
+        ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
+
+        """
+        8.8.8.8 google-public-dns-a.google.com
+        """
+        """
+        Oh, domaintools datapaths:
+        action_result.data.*.ip_addresses.*.ip_address    string    ip
+        action_result.data.*.ip_addresses.*.domain_count    numeric
+        action_result.data.*.ip_addresses.*.domain_names    string    domain
+        """
+        if ret_val:
+            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+                return action_result.set_status(phantom.APP_SUCCESS, response)
+            else:
+                response_data = {'raw' : response }
+                response_data['domain_names'] = []
+                response = response.strip().split('\n')
+                for line in (response):
+                    response_data['domain_names'].append(line)
+                domain_count_total = len(response_data['domain_names'])
+
+                # Set the summary and response data
+                for domain in response_data['domain_names']:
+                    action_result.add_data({'domain': domain})
+
+                action_result.set_summary({'total_domains': domain_count_total})
+
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
@@ -326,7 +369,7 @@ class HackerTargetConnector(BaseConnector):
         RECV (3.0379s) Handshake with google.com:80 (216.58.195.78:80) completed
         SENT (4.0374s) Starting TCP Handshake > google.com:80 (216.58.195.78:80)
         RECV (4.0405s) Handshake with google.com:80 (216.58.195.78:80) completed
-         
+
         Max rtt: 3.635ms | Min rtt: 3.207ms | Avg rtt: 3.451ms
         TCP connection attempts: 5 | Successful connections: 5 | Failed: 0 (0.00%)
         Nping done: 1 IP address pinged in 4.04 seconds
@@ -344,11 +387,11 @@ class HackerTargetConnector(BaseConnector):
                         response_data['sent'] = linedata[0].split(':')[1].strip()
                         response_data['succeeded'] = linedata[1].split(':')[1].strip()
                         response_data['failed'] = linedata[2].split(':')[1].strip().split(' ')[0].strip()
-    
+
                 # Set the summary and response data
                 action_result.add_data(response_data)
                 # action_result.set_summary({ 'total_hops': len(response_data)})
-    
+
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
@@ -389,30 +432,30 @@ class HackerTargetConnector(BaseConnector):
         # If you see inaccuracies in the results, please report at
         # https://www.arin.net/public/whoisinaccuracy/index.xhtml
         #
-        
-        
+
+
         #
         # The following results may also be obtained via:
         # https://whois.arin.net/rest/nets;q=8.8.8.8?showDetails=true&showARIN=false&showNonArinTopLevelNet=false&ext=netref2
         #
-        
-        
+
+
         # start
-        
+
         NetRange:       8.0.0.0 - 8.255.255.255
         CIDR:           8.0.0.0/8
         NetName:        LVLT-ORG-8-8
         NetHandle:      NET-8-0-0-0-1
         Parent:          ()
         NetType:        Direct Allocation
-        OriginAS:       
+        OriginAS:
         Organization:   Level 3 Communications, Inc. (LVLT)
         RegDate:        1992-12-01
         Updated:        2012-02-24
         Ref:            https://whois.arin.net/rest/net/NET-8-0-0-0-1
-        
-        
-        
+
+
+
         OrgName:        Level 3 Communications, Inc.
         OrgId:          LVLT
         Address:        1025 Eldorado Blvd.
@@ -424,45 +467,45 @@ class HackerTargetConnector(BaseConnector):
         Updated:        2012-01-30
         Comment:        ADDRESSES WITHIN THIS BLOCK ARE NON-PORTABLE
         Ref:            https://whois.arin.net/rest/org/LVLT
-        
-        
+
+
         OrgAbuseHandle: APL8-ARIN
         OrgAbuseName:   Abuse POC LVLT
-        OrgAbusePhone:  +1-877-453-8353 
+        OrgAbusePhone:  +1-877-453-8353
         OrgAbuseEmail:  abuse@level3.com
         OrgAbuseRef:    https://whois.arin.net/rest/poc/APL8-ARIN
-        
+
         OrgTechHandle: IPADD5-ARIN
         OrgTechName:   ipaddressing
-        OrgTechPhone:  +1-877-453-8353 
+        OrgTechPhone:  +1-877-453-8353
         OrgTechEmail:  ipaddressing@level3.com
         OrgTechRef:    https://whois.arin.net/rest/poc/IPADD5-ARIN
-        
+
         OrgNOCHandle: NOCSU27-ARIN
         OrgNOCName:   NOC Support
-        OrgNOCPhone:  +1-877-453-8353 
+        OrgNOCPhone:  +1-877-453-8353
         OrgNOCEmail:  noc.coreip@level3.com
         OrgNOCRef:    https://whois.arin.net/rest/poc/NOCSU27-ARIN
-        
+
         # end
-        
-        
+
+
         # start
-        
+
         NetRange:       8.8.8.0 - 8.8.8.255
         CIDR:           8.8.8.0/24
         NetName:        LVLT-GOGL-8-8-8
         NetHandle:      NET-8-8-8-0-1
         Parent:         LVLT-ORG-8-8 (NET-8-0-0-0-1)
         NetType:        Reallocated
-        OriginAS:       
+        OriginAS:
         Organization:   Google Inc. (GOGL)
         RegDate:        2014-03-14
         Updated:        2014-03-14
         Ref:            https://whois.arin.net/rest/net/NET-8-8-8-0-1
-        
-        
-        
+
+
+
         OrgName:        Google Inc.
         OrgId:          GOGL
         Address:        1600 Amphitheatre Parkway
@@ -473,24 +516,24 @@ class HackerTargetConnector(BaseConnector):
         RegDate:        2000-03-30
         Updated:        2015-11-06
         Ref:            https://whois.arin.net/rest/org/GOGL
-        
-        
+
+
         OrgAbuseHandle: ABUSE5250-ARIN
         OrgAbuseName:   Abuse
-        OrgAbusePhone:  +1-650-253-0000 
+        OrgAbusePhone:  +1-650-253-0000
         OrgAbuseEmail:  network-abuse@google.com
         OrgAbuseRef:    https://whois.arin.net/rest/poc/ABUSE5250-ARIN
-        
+
         OrgTechHandle: ZG39-ARIN
         OrgTechName:   Google Inc
-        OrgTechPhone:  +1-650-253-0000 
+        OrgTechPhone:  +1-650-253-0000
         OrgTechEmail:  arin-contact@google.com
         OrgTechRef:    https://whois.arin.net/rest/poc/ZG39-ARIN
-        
+
         # end
-        
-        
-        
+
+
+
         #
         # ARIN WHOIS data and services are subject to the Terms of Use
         # available at: https://www.arin.net/whois_tou.html
@@ -509,11 +552,11 @@ class HackerTargetConnector(BaseConnector):
                 for line in (response):
                     if ": " in line:
                         response_data[line.split(': ', 1)[0].strip().replace(' ', '_')] = line.split(': ', 1)[1].strip()
-    
+
                 # Set the summary and response data
                 action_result.add_data(response_data)
                 # action_result.set_summary({ 'total_hops': len(response_data)})
-    
+
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
@@ -546,33 +589,33 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
 
         """
-        
+
         Whois Server Version 2.0
-        
+
         Domain names in the .com and .net domains can now be registered
         with many different competing registrars. Go to http://www.internic.net
         for detailed information.
-        
+
         Aborting search 50 records found .....
            Server Name: GOOGLE.COM.ACKNOWLEDGES.NON-FREE.COM
            IP Address: 90.0.91.3
            Registrar: NAMESILO, LLC
            Whois Server: whois.namesilo.com
            Referral URL: http://www.namesilo.com
-        
-        
+
+
            Server Name: GOOGLE.COM.AFRICANBATS.ORG
            Registrar: TUCOWS DOMAINS INC.
            Whois Server: whois.tucows.com
            Referral URL: http://www.tucowsdomains.com
-                
-        
+
+
            Server Name: GOOGLE.COM.VN
            Registrar: ONLINENIC, INC.
            Whois Server: whois.onlinenic.com
            Referral URL: http://www.onlinenic.com
-        
-        
+
+
            Domain Name: GOOGLE.COM
            Registrar: MARKMONITOR INC.
            Sponsoring Registrar IANA ID: 292
@@ -591,19 +634,19 @@ class HackerTargetConnector(BaseConnector):
            Updated Date: 20-jul-2011
            Creation Date: 15-sep-1997
            Expiration Date: 14-sep-2020
-        
+
         >>> Last update of whois database: Fri, 04 Nov 2016 05:01:51 GMT <<<
-        
+
         For more information on Whois status codes, please visit https://icann.org/epp
-        
+
         NOTICE: The expiration date displayed in this record is the date the
         registrar's sponsorship of the domain name registration in the registry is
         currently set to expire. This date does not necessarily reflect the expiration
         date of the domain name registrant's agreement with the sponsoring
         registrar.  Users may consult the sponsoring registrar's Whois database to
         view the registrar's reported date of expiration for this registration.
-        
-        
+
+
         The Registry database contains ONLY .COM, .NET, .EDU domains and
         Registrars.
         Domain Name: google.com
@@ -623,7 +666,7 @@ class HackerTargetConnector(BaseConnector):
         Domain Status: serverUpdateProhibited (https://www.icann.org/epp#serverUpdateProhibited)
         Domain Status: serverTransferProhibited (https://www.icann.org/epp#serverTransferProhibited)
         Domain Status: serverDeleteProhibited (https://www.icann.org/epp#serverDeleteProhibited)
-        Registry Registrant ID: 
+        Registry Registrant ID:
         Registrant Name: Dns Admin
         Registrant Organization: Google Inc.
         Registrant Street: Please contact contact-admin@google.com, 1600 Amphitheatre Parkway
@@ -632,11 +675,11 @@ class HackerTargetConnector(BaseConnector):
         Registrant Postal Code: 94043
         Registrant Country: US
         Registrant Phone: +1.6502530000
-        Registrant Phone Ext: 
+        Registrant Phone Ext:
         Registrant Fax: +1.6506188571
-        Registrant Fax Ext: 
+        Registrant Fax Ext:
         Registrant Email: dns-admin@google.com
-        Registry Admin ID: 
+        Registry Admin ID:
         Admin Name: DNS Admin
         Admin Organization: Google Inc.
         Admin Street: 1600 Amphitheatre Parkway
@@ -645,11 +688,11 @@ class HackerTargetConnector(BaseConnector):
         Admin Postal Code: 94043
         Admin Country: US
         Admin Phone: +1.6506234000
-        Admin Phone Ext: 
+        Admin Phone Ext:
         Admin Fax: +1.6506188571
-        Admin Fax Ext: 
+        Admin Fax Ext:
         Admin Email: dns-admin@google.com
-        Registry Tech ID: 
+        Registry Tech ID:
         Tech Name: DNS Admin
         Tech Organization: Google Inc.
         Tech Street: 2400 E. Bayshore Pkwy
@@ -658,9 +701,9 @@ class HackerTargetConnector(BaseConnector):
         Tech Postal Code: 94043
         Tech Country: US
         Tech Phone: +1.6503300100
-        Tech Phone Ext: 
+        Tech Phone Ext:
         Tech Fax: +1.6506181499
-        Tech Fax Ext: 
+        Tech Fax Ext:
         Tech Email: dns-admin@google.com
         Name Server: ns2.google.com
         Name Server: ns3.google.com
@@ -669,7 +712,7 @@ class HackerTargetConnector(BaseConnector):
         DNSSEC: unsigned
         URL of the ICANN WHOIS Data Problem Reporting System: http://wdprs.internic.net/
         >>> Last update of WHOIS database: 2016-11-03T22:01:02-0700 <<<
-        
+
         The Data in MarkMonitor.com's WHOIS database is provided by MarkMonitor.com for
         information purposes, and to assist persons in obtaining information about or
         related to a domain name registration record.  MarkMonitor.com does not guarantee
@@ -681,19 +724,19 @@ class HackerTargetConnector(BaseConnector):
              MarkMonitor.com (or its systems).
         MarkMonitor.com reserves the right to modify these terms at any time.
         By submitting this query, you agree to abide by this policy.
-        
+
         MarkMonitor is the Global Leader in Online Brand Protection.
-        
+
         MarkMonitor Domain Management(TM)
         MarkMonitor Brand Protection(TM)
         MarkMonitor AntiPiracy(TM)
         MarkMonitor AntiFraud(TM)
         Professional and Managed Services
-        
+
         Visit MarkMonitor at http://www.markmonitor.com
         Contact us at +1.8007459229
         In Europe, at +44.02032062220
-        
+
         For more information on Whois status codes, please visit
          https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en
         --
@@ -707,11 +750,11 @@ class HackerTargetConnector(BaseConnector):
                 for line in (response):
                     if ": " in line:
                         response_data[line.split(': ', 1)[0].strip().replace(' ', '_')] = line.split(': ', 1)[1].strip()
-    
+
                 # Set the summary and response data
                 action_result.add_data(response_data)
                 # action_result.set_summary({ 'total_hops': len(response_data)})
-    
+
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
@@ -755,7 +798,7 @@ class HackerTargetConnector(BaseConnector):
         X-XSS-Protection: 1; mode=block
         X-Frame-Options: SAMEORIGIN
         Set-Cookie: NID=90=lGF74xOPS-WohuH24hOd7d-3g858eQoOstprLZTDuxG7PWX4iEfkoHVN0OTfh76r2dZaRcs5GVA9gZEy4Kxz_IZVmhjywzcrXbmXxumDufycZjdC3GCHtWTmYB4tuKRM; expires=Sat, 06-May-2017 05:59:58 GMT; path=/; domain=.google.com; HttpOnly
-        
+
         HTTP/1.1 200 OK
         Date: Fri, 04 Nov 2016 05:59:59 GMT
         Expires: -1
@@ -790,11 +833,11 @@ class HackerTargetConnector(BaseConnector):
                             response_data_temp['http_version'] = line.split(' ')[0]
                             response_data_temp['response_code'] = line.split(' ')[1]
                     response_data['headers'].append(response_data_temp)
-    
+
                 # Set the summary and response data
                 action_result.add_data(response_data)
                 action_result.set_summary({ 'header_count': len(response_data['headers'])})
-    
+
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
@@ -859,11 +902,11 @@ class HackerTargetConnector(BaseConnector):
                 for line in (response):
                     if "http" in line:
                         response_data['urls'].append({'url' : line })
-    
+
                 # Set the summary and response data
                 action_result.add_data(response_data)
                 action_result.set_summary({ 'total_urls': len(response_data['urls'])})
-    
+
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
@@ -931,11 +974,11 @@ class HackerTargetConnector(BaseConnector):
                         response_data['hop'][lineno]['worst'] = response_data['hop'][lineno]['raw'].split(' ')[7]
                         response_data['hop'][lineno]['stdev'] = response_data['hop'][lineno]['raw'].split(' ')[8]
                         response_data['hop'][lineno]['hop'] = lineno
-    
+
                 # Set the summary and response data
                 action_result.add_data(response_data)
                 action_result.set_summary({ 'total_hops': len(response_data['hop'])})
-    
+
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
@@ -961,7 +1004,7 @@ class HackerTargetConnector(BaseConnector):
         elif (action == self.ACTION_ID_PING_DOMAIN):
             ret_val = self._ping_host(param)
         elif (action == self.ACTION_ID_REVERSE_IP):
-            ret_val = self._reverse_domain(param)
+            ret_val = self._reverse_ip(param)
         elif (action == self.ACTION_ID_REVERSE_DOMAIN):
             ret_val = self._reverse_domain(param)
         elif (action == self.ACTION_ID_WHOIS_IP):
@@ -976,7 +1019,7 @@ class HackerTargetConnector(BaseConnector):
             ret_val = self._get_http_headers(param)
         elif (action == self.ACTION_ID_GET_LINKS):
             ret_val = self._get_http_links(param)
-        
+
         #self.debug_print('DEBUG: ret_val: {}'.format(ret_val))
 
         return ret_val
