@@ -12,15 +12,17 @@ from phantom.action_result import ActionResult
 # THIS Connector imports
 from hackertarget_consts import *
 
-import requests, time
+import requests
+import time
+import re
 import simplejson as json
 
 
 class HackerTargetConnector(BaseConnector):
 
     # actions supported by this script
-    ACTION_ID_TRACEROUTE_IP= "traceroute_ip"
-    ACTION_ID_TRACEROUTE_DOMAIN= "traceroute_domain"
+    ACTION_ID_TRACEROUTE_IP = "traceroute_ip"
+    ACTION_ID_TRACEROUTE_DOMAIN = "traceroute_domain"
     ACTION_ID_PING_IP = "ping_ip"
     ACTION_ID_PING_DOMAIN = "ping_domain"
     ACTION_ID_REVERSE_IP = "reverse_ip"
@@ -68,9 +70,6 @@ class HackerTargetConnector(BaseConnector):
     def _make_rest_call(self, endpoint, action_result, headers={}, params=None, data=None, method="get"):
         """ Function that makes the REST call to the device, generic function that can be called from various action handlers"""
 
-        # Get the config
-        config = self.get_config()
-
         # Create the headers
         headers.update(self._headers)
 
@@ -96,14 +95,13 @@ class HackerTargetConnector(BaseConnector):
                         # auth=(self._username, self._key),  # The authentication method, currently set to simple base authentication
                         data=json.dumps(data) if data else None,  # the data, converted to json string format if present, else just set to None
                         headers=headers,  # The headers to send in the HTTP call
-                        verify=config[phantom.APP_JSON_VERIFY],  # should cert verification be carried out?
                         params=params)  # uri parameters if any
             except Exception as e:
-                return (action_result.set_status(phantom.APP_ERROR, ERR_SERVER_CONNECTION, e), r.text)
+                return (action_result.set_status(phantom.APP_ERROR, ERR_SERVER_CONNECTION + ":{}".format(str(e))), None)
 
             # r.encoding='utf-8'
 
-            #self.debug_print('REST url: {0} - attempt: {1}'.format(r.url, (MAX_TIMEOUT_DEF - retry_count)))
+            # self.debug_print('REST url: {0} - attempt: {1}'.format(r.url, (MAX_TIMEOUT_DEF - retry_count)))
             # self.debug_print('REST text: {0}'.format(r.text))
             if r.status_code == 200:
                 success = True
@@ -116,34 +114,38 @@ class HackerTargetConnector(BaseConnector):
         # if (r.status_code >= 500): # these guys like 502/504 errors due to gateway failures, we can retry a few times.
         #    return (phantom.APP_SUCCESS, resp_json)
         # Process errors
-        #self.debug_print('Response returned: {}'.format(r.text))
+        # self.debug_print('Response returned: {}'.format(r.text))
         if (phantom.is_fail(r.status_code) or r.text is False or HACKERTARGET_FAIL_ERROR in r.text):
             self.debug_print('FAILURE: Found in the app response.\nResponse: {}'.format(r.text))
-            #if response:
+            # if response:
             #    action_result.set_summary({'error' : r.text})
-            #self.debug_print(action_result.get_message())
-            #action_result.set_summary({'error' : r.text})
-            #self.set_status(phantom.APP_ERROR)
+            # self.debug_print(action_result.get_message())
+            # action_result.set_summary({'error' : r.text})
+            # self.set_status(phantom.APP_ERROR)
             return (phantom.APP_ERROR, r.text)
 
         if r.text:
             if HACKERTARGET_INPUT_INVALID.lower() in r.text.lower() or HACKERTARGET_NO_RESULTS.lower() in r.text.lower():
                 self.debug_print('FAILURE: Found in the app response.\nResponse: {}'.format(r.text))
-                #action_result.set_summary({'error' : r.text})
+                # action_result.set_summary({'error' : r.text})
                 return (phantom.APP_SUCCESS, ('error: ' + r.text))
         #
         # Handle/process any errors that we get back from the device
         if (r.status_code == 200):
             # Success
             return (phantom.APP_SUCCESS, r.text)
+        if r.status_code == 404:
+            message = ERR_FROM_SERVER.format(status=r.status_code, detail=ERR_404_MSG)
 
+            return (action_result.set_status(phantom.APP_ERROR, message), None)
         # Failure
         # action_result.add_data({'raw':r.text})
 
         # details = json.dumps(resp_json).replace('{', '').replace('}', '')
 
         # return (action_result.set_status(phantom.APP_ERROR, ERR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json)
-        return (action_result.set_status(phantom.APP_ERROR, ERR_FROM_SERVER.format(status=r.status_code, detail=r.text)), r.text)
+
+        return (action_result.set_status(phantom.APP_ERROR, ERR_FROM_SERVER.format(status=r.status_code, detail=r.text.encode('utf-8'))), None)
 
     def _geolocate_domain(self, param):
         """ Action handler for the '_ping_host' action"""
@@ -166,49 +168,55 @@ class HackerTargetConnector(BaseConnector):
         # parameters here
         # host - hostname; required.
         if param.get('ip'):
-            request_params = {'q' : param.get('ip') }
+            request_params = {'q': param.get('ip') }
         else:
-            request_params = {'q' : param.get('domain') }
+            request_params = {'q': param.get('domain') }
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
-        ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
+        try:
+            ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
 
-        """
-        IP Address: 216.58.217.110
-        Country: US
-        State: California
-        City: Mountain View
-        Latitude: 37.419201
-        Longitude: -122.057404
-        """
-        if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
-                return action_result.set_status(phantom.APP_SUCCESS, response)
+            """
+            IP Address: 216.58.217.110
+            Country: US
+            State: California
+            City: Mountain View
+            Latitude: 37.419201
+            Longitude: -122.057404
+            """
+            if ret_val:
+                if 'error' in response:  # summary has been set to error per rest pull code, exit with success
+                    if param.get('domain'):
+                        response = unicode("error input invalid. enter valid DOMAIN.")
+                    return action_result.set_status(phantom.APP_SUCCESS, response)
+                else:
+                    response_data = {'raw': response }
+                    response = response.split('\n')
+                    for line in (response):
+                        linedata = (line.strip().split(':'))
+                        if len(linedata) > 1:
+                            if "state" in linedata[0].lower():  # make same as maxmind
+                                response_data['state_name'] = linedata[1].strip()
+                            elif "city" in linedata[0].lower():
+                                response_data['city_name'] = linedata[1].strip()
+                            elif "country" in linedata[0].lower():
+                                response_data['country_name'] = linedata[1].strip()
+                            elif "ip" in linedata[0].lower():
+                                response_data['ip'] = linedata[1].strip()
+                            else:
+                                response_data[linedata[0].strip().lower().replace(' ', '_')] = linedata[1].strip()
+                    # Set the summary and response data
+                    action_result.add_data(response_data)
+
+                    # action_result.set_summary({ 'total_hops': len(response_data)})
+
+                    # Set the Status
+                    return action_result.set_status(phantom.APP_SUCCESS)
             else:
-                response_data = {'raw' : response }
-                response = response.split('\n')
-                for line in (response):
-                    linedata = (line.strip().split(':'))
-                    if "state" in linedata[0].lower():  # make same as maxmind
-                        response_data['state_name'] = linedata[1].strip()
-                    elif "city" in linedata[0].lower():
-                        response_data['city_name'] = linedata[1].strip()
-                    elif "country" in linedata[0].lower():
-                        response_data['country_name'] = linedata[1].strip()
-                    elif "ip" in linedata[0].lower():
-                        response_data['ip'] = linedata[1].strip()
-                    else:
-                        response_data[linedata[0].strip().lower().replace(' ', '_')] = linedata[1].strip()
-
-                # Set the summary and response data
-                action_result.add_data(response_data)
-                # action_result.set_summary({ 'total_hops': len(response_data)})
-
-                # Set the Status
-                return action_result.set_status(phantom.APP_SUCCESS)
-        else:
-            return phantom.APP_ERROR
+                return phantom.APP_ERROR
+        except Exception as e:
+            return (action_result.set_status(phantom.APP_ERROR, "Unable to execute geolocate domain. Error:{0}".format(e.message)), None)
 
     def _reverse_domain(self, param):
         """ Action handler for the '_reverse_domain' action"""
@@ -221,7 +229,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q' : param.get('domain') }
+        request_params = {'q': param.get('domain') }
         endpoint = HACKERTARGET_REVERSEDNS_URI
 
         # Progress
@@ -244,28 +252,39 @@ class HackerTargetConnector(BaseConnector):
         action_result.data.*.ip_addresses.*.domain_names    string    domain
         """
         if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+            error = False
+            for err in API_ERRORS:
+                if err in response:
+                    error = True
+                    break
+            if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw' : response }
-                response_data['ip_addresses'] = []
+                response_data = {'raw': response }
+                response_data['domain_names'] = []
                 response = response.strip().split('\n')
                 tempresponse_data = {}
                 for line in (response):
-                    #self.debug_print('Response line: {}'.format(line.split(' ')))
-                    ipaddr = line.split(',')[1]
-                    if ipaddr in tempresponse_data.keys():
-                        tempresponse_data[ipaddr]['domain_names'].append(line.split(',')[0])
-                        tempresponse_data[ipaddr]['domain_count'] += 1
+                    # self.debug_print('Response line: {}'.format(line.split(' ')))
+                    line = re.sub('\s', ',', line)
+                    arr_list = line.split(',', 1)
+                    if len(arr_list) > 1:
+                        domain_name = arr_list[0]
+                        ip_addrs = arr_list[1]
+                        if domain_name in tempresponse_data.keys():
+                            tempresponse_data[domain_name]['ip_addresses'].append(ip_addrs.split(','))
+                            tempresponse_data[domain_name]['ip_count'] += len(ip_addrs.split(','))
+                        else:
+                            tempresponse_data[domain_name] = { 'domain': domain_name, 'ip_addresses': ip_addrs.split(','), 'ip_count': len(ip_addrs.split(',')) }
                     else:
-                        tempresponse_data[ipaddr] = { 'ip_address' : ipaddr, 'domain_names' : [line.split(',')[0]], 'domain_count' : 1 }
-                domain_count_total = 0
-                for ipaddr in tempresponse_data.keys():
-                    response_data['ip_addresses'].append(tempresponse_data[ipaddr])
-                    domain_count_total += len(tempresponse_data[ipaddr]['domain_names'])
+                        self.debug_print("Skipping current response line - {}".format(line))
+                ip_count_total = 0
+                for domain_name in tempresponse_data.keys():
+                    response_data['domain_names'].append(tempresponse_data[domain_name])
+                    ip_count_total += tempresponse_data[domain_name]['ip_count']
                 # Set the summary and response data
                 action_result.add_data(response_data)
-                action_result.set_summary({ 'total_domains': domain_count_total, 'total_ips': len(tempresponse_data.keys())})
+                action_result.set_summary({ 'total_domains': len(tempresponse_data.keys()), 'total_ips': ip_count_total})
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -283,7 +302,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q' : param.get('ip')}
+        request_params = {'q': param.get('ip')}
         # endpoint = HACKERTARGET_REVERSEIP_URI - as of writing, reverse ip is busted, but can use reverse dns URI.
         endpoint = HACKERTARGET_REVERSEIP_URI
 
@@ -307,10 +326,15 @@ class HackerTargetConnector(BaseConnector):
         action_result.data.*.ip_addresses.*.domain_names    string    domain
         """
         if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+            error = False
+            for err in API_ERRORS:
+                if err in response:
+                    error = True
+                    break
+            if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw' : response }
+                response_data = {'raw': response }
                 response_data['domain_names'] = []
                 response = response.strip().split('\n')
                 for line in (response):
@@ -349,9 +373,9 @@ class HackerTargetConnector(BaseConnector):
         # parameters here
         # host - hostname; required.
         if param.get('domain'):
-            request_params = {'q' : param.get('domain') }
+            request_params = {'q': param.get('domain') }
         else:
-            request_params = {'q' : param.get('ip') }
+            request_params = {'q': param.get('ip') }
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -375,10 +399,10 @@ class HackerTargetConnector(BaseConnector):
         Nping done: 1 IP address pinged in 4.04 seconds
         """
         if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+            if 'error: ' in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw' : response }
+                response_data = {'raw': response }
                 response = response.split('\n')
                 for line in (response):
                     if "TCP connection attempts:" in line:
@@ -417,7 +441,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q' : param.get('ip') }
+        request_params = {'q': param.get('ip') }
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -544,10 +568,10 @@ class HackerTargetConnector(BaseConnector):
 
         """
         if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+            if 'error: ' in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw' : response }
+                response_data = {'raw': response }
                 response = response.strip().split('\n')
                 for line in (response):
                     if ": " in line:
@@ -582,7 +606,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q' : param.get('domain') }
+        request_params = {'q': param.get('domain') }
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -742,10 +766,10 @@ class HackerTargetConnector(BaseConnector):
         --
         """
         if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+            if 'error: ' in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw' : response }
+                response_data = {'raw': response }
                 response = response.strip().split('\n')
                 for line in (response):
                     if ": " in line:
@@ -780,7 +804,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q' : param.get('url') }
+        request_params = {'q': param.get('url') }
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -797,7 +821,8 @@ class HackerTargetConnector(BaseConnector):
         Content-Length: 231
         X-XSS-Protection: 1; mode=block
         X-Frame-Options: SAMEORIGIN
-        Set-Cookie: NID=90=lGF74xOPS-WohuH24hOd7d-3g858eQoOstprLZTDuxG7PWX4iEfkoHVN0OTfh76r2dZaRcs5GVA9gZEy4Kxz_IZVmhjywzcrXbmXxumDufycZjdC3GCHtWTmYB4tuKRM; expires=Sat, 06-May-2017 05:59:58 GMT; path=/; domain=.google.com; HttpOnly
+        Set-Cookie: NID=90=lGF74xOPS-WohuH24hOd7d-3g858eQoOstprLZTDuxG7PWX4iEfkoHVN0OTfh76r2dZaRcs5GVA9gZEy4Kxz_IZVmhjywzcrXbmXxumDufycZjdC3GCHtWTmYB4tuKRM;
+                    expires=Sat, 06-May-2017 05:59:58 GMT; path=/; domain=.google.com; HttpOnly
 
         HTTP/1.1 200 OK
         Date: Fri, 04 Nov 2016 05:59:59 GMT
@@ -809,18 +834,18 @@ class HackerTargetConnector(BaseConnector):
         Server: gws
         X-XSS-Protection: 1; mode=block
         X-Frame-Options: SAMEORIGIN
-        Set-Cookie: NID=90=OVSYFWe4vAEcYCrr6Sm_mNwdBwl3uJCC6FOQHakkiVbzHuOTJLhiFIdMMo_V90V7t7Sdr6VQUAqojFaiLGIrxPM58UrMd630c5AufwCDClqBoVHiN1BeyUnErOUQW4Aj-jc9ZaddeT2Ob0s; expires=Sat, 06-May-2017 05:59:59 GMT; path=/; domain=.google.com; HttpOnly
+        Set-Cookie: NID=90=OVSYFWe4vAEcYCrr6Sm_mNwdBwl3uJCC6FOQHakkiVbzHuOTJLhiFIdMMo_V90V7t7Sdr6VQUAqojFaiLGIrxPM58UrMd630c5AufwCDClqBoVHiN1BeyUnErOUQW4Aj-jc9ZaddeT2Ob0s;
+                     expires=Sat, 06-May-2017 05:59:59 GMT; path=/; domain=.google.com; HttpOnly
         Alt-Svc: quic=:443; ma=2592000; v=36,35,34
         Transfer-Encoding: chunked
         Accept-Ranges: none
         Vary: Accept-Encoding
         """
-        headerfound = False
         if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+            if 'error: ' in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw' : response }
+                response_data = {'raw': response }
                 response_headers = response.strip().split('HTTP/')[1:]
                 response_data['headers'] = []
                 for response2 in response_headers:
@@ -863,7 +888,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q' : param.get('url') }
+        request_params = {'q': param.get('url') }
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -893,15 +918,15 @@ class HackerTargetConnector(BaseConnector):
         http://www.google.com/intl/en/policies/terms/
         """
         if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+            if 'error: ' in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw' : response }
+                response_data = {'raw': response }
                 response = response.strip().split('\n')
                 response_data['urls'] = []
                 for line in (response):
                     if "http" in line:
-                        response_data['urls'].append({'url' : line })
+                        response_data['urls'].append({'url': line })
 
                 # Set the summary and response data
                 action_result.add_data(response_data)
@@ -911,7 +936,6 @@ class HackerTargetConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
             return phantom.APP_ERROR
-
 
     def _traceroute_host(self, param):
         """ Action handler for the 'run traceroute' action"""
@@ -934,9 +958,9 @@ class HackerTargetConnector(BaseConnector):
         # parameters here
         # host - hostname; required.
         if param.get('ip'):
-            request_params = {'q' : param.get('ip') }
+            request_params = {'q': param.get('ip') }
         else:
-            request_params = {'q' : param.get('domain') }
+            request_params = {'q': param.get('domain') }
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -953,10 +977,10 @@ class HackerTargetConnector(BaseConnector):
           6.|-- google-public-dns-a.google.com  0.0%     4    2.9   3.0   2.9   3.1   0.0
         """
         if ret_val:
-            if 'error: ' in response: # summary has been set to error per rest pull code, exit with success
+            if 'error: ' in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw' : response }
+                response_data = {'raw': response }
                 response_data['hop'] = {}
                 response = response.split('\n')
                 for line in (response):
@@ -993,7 +1017,7 @@ class HackerTargetConnector(BaseConnector):
         # Intialize it to success
         ret_val = phantom.APP_SUCCESS
 
-        #self.debug_print('DEBUG Action: {}'.format(action))
+        # self.debug_print('DEBUG Action: {}'.format(action))
         # Bunch if if..elif to process actions
         if (action == self.ACTION_ID_TRACEROUTE_IP):
             ret_val = self._traceroute_host(param)
@@ -1020,9 +1044,10 @@ class HackerTargetConnector(BaseConnector):
         elif (action == self.ACTION_ID_GET_LINKS):
             ret_val = self._get_http_links(param)
 
-        #self.debug_print('DEBUG: ret_val: {}'.format(ret_val))
+        # self.debug_print('DEBUG: ret_val: {}'.format(ret_val))
 
         return ret_val
+
 
 if __name__ == '__main__':
     """ Code that is executed when run in standalone debug mode

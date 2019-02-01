@@ -7,6 +7,7 @@
 # HACKERTARGET_ERR_API_INITIALIZATION = "API Initialization failed"
 # ERR_CONNECTIVITY_TEST = "Connectivity test failed"
 # SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
+ERR_404_MSG = "Requested resource not found"
 ERR_SERVER_CONNECTION = "Connection failed"
 ERR_FROM_SERVER = "API failed, Status code: {status}, Detail: {detail}"
 # ERR_EMPTY_FIELDS = "The fields dictionary was detected to be empty"
@@ -34,3 +35,4 @@ HACKERTARGET_PAGELINKS_URI = "/pagelinks/"
 
 MAX_TIMEOUT_DEF = 5
 SLEEP_SECS = 15
+API_ERRORS = ['API count exceeded', 'error', 'no record']
