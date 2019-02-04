@@ -3,4 +3,3 @@ docker-compose.yml
 Makefile
 .git*
 *.py
-.git*
