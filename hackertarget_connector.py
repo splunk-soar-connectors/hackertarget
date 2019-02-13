@@ -188,7 +188,7 @@ class HackerTargetConnector(BaseConnector):
             if ret_val:
                 if 'error' in response:  # summary has been set to error per rest pull code, exit with success
                     if param.get('domain'):
-                        response = unicode("error input invalid. enter valid DOMAIN.")
+                        response = unicode("Error: Invalid input. Enter the valid domain.")
                     return action_result.set_status(phantom.APP_SUCCESS, response)
                 else:
                     response_data = {'raw': response }
