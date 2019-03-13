@@ -3,7 +3,7 @@
     "name": "HackerTarget",
     "description": "This app supports executing investigative actions to analyze a host",
     "type": "information",
-    "publisher": "Phantom",
+    "publisher": "Splunk",
     "main_module": "hackertarget_connector.pyc",
     "app_version": "1.0.19",
     "utctime_updated": "2019-02-05T00:28:46.000000Z",
