@@ -4,27 +4,45 @@
     "description": "This app supports executing investigative actions to analyze a host",
     "type": "information",
     "publisher": "Splunk",
-    "main_module": "hackertarget_connector.pyc",
-    "app_version": "1.0.20",
+    "main_module": "hackertarget_connector.py",
+    "app_version": "2.0.0",
     "utctime_updated": "2019-03-13T20:35:58.000000Z",
     "package_name": "phantom_hackertarget",
     "product_vendor": "HackerTarget",
     "product_name": "HackerTarget",
     "product_version_regex": ".*",
-    "min_phantom_version": "4.0.1068",
+    "min_phantom_version": "4.9.39220",
     "logo": "logo_hackertarget.svg",
     "logo_dark": "logo_hackertarget_dark.svg",
-    "license": "Copyright (c) 2016-2019 Splunk Inc.",
+    "license": "Copyright (c) 2016-2021 Splunk Inc.",
+    "python_version": "3",
+    "latest_tested_version": [
+        "cloud, api/v1 tested on 23rd June, 2021"
+    ],
     "configuration": {
         "base_url": {
             "data_type": "string",
             "order": 0,
             "description": "Base URL",
-            "default": "https://api.hackertarget.com/",
-            "required": false
+            "default": "https://api.hackertarget.com/"
+        },
+        "api_key": {
+            "data_type": "password",
+            "order": 1,
+            "description": "API Key"
         }
     },
     "actions": [
+        {
+            "action": "test connectivity",
+            "description": "Validate the asset configuration for connectivity",
+            "type": "test",
+            "identifier": "test_asset_connectivity",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
+        },
         {
             "action": "get headers",
             "description": "Get HTTP Headers from a URL",
@@ -55,7 +73,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -65,7 +84,7 @@
                         "url"
                     ],
                     "example_values": [
-                        "https://www.google.com"
+                        "https://www.hackertarget.com"
                     ]
                 },
                 {
@@ -74,6 +93,11 @@
                     "example_values": [
                         "none"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Age",
+                    "data_type": "string",
+                    "example_value": "178725"
                 },
                 {
                     "data_path": "action_result.data.*.headers.*.Alt-Svc",
@@ -85,11 +109,16 @@
                 {
                     "data_path": "action_result.data.*.headers.*.Cache-Control",
                     "data_type": "string",
-                    "column_name": "cache ctl",
+                    "column_name": "Cache Ctl",
                     "column_order": 4,
                     "example_values": [
                         "private, max-age=0"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Content-Encoding",
+                    "data_type": "string",
+                    "example_value": "gzip"
                 },
                 {
                     "data_path": "action_result.data.*.headers.*.Content-Length",
@@ -98,7 +127,7 @@
                 {
                     "data_path": "action_result.data.*.headers.*.Content-Type",
                     "data_type": "string",
-                    "column_name": "content type",
+                    "column_name": "Content Type",
                     "column_order": 5,
                     "example_values": [
                         "text/html; charset=UTF-8"
@@ -107,7 +136,7 @@
                 {
                     "data_path": "action_result.data.*.headers.*.Date",
                     "data_type": "string",
-                    "column_name": "date",
+                    "column_name": "Date",
                     "column_order": 7,
                     "example_values": [
                         "Thu, 31 Jan 2019 05:55:18 GMT"
@@ -116,11 +145,16 @@
                 {
                     "data_path": "action_result.data.*.headers.*.Expires",
                     "data_type": "string",
-                    "column_name": "expires",
+                    "column_name": "Expires",
                     "column_order": 10,
                     "example_values": [
                         "-1"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.headers.*.Last-Modified",
+                    "data_type": "string",
+                    "example_value": "Sat, 19 Jun 2021 04:34:44 GMT"
                 },
                 {
                     "data_path": "action_result.data.*.headers.*.Location",
@@ -141,7 +175,7 @@
                 {
                     "data_path": "action_result.data.*.headers.*.Server",
                     "data_type": "string",
-                    "column_name": "server",
+                    "column_name": "Server",
                     "column_order": 6,
                     "example_values": [
                         "gws"
@@ -151,13 +185,13 @@
                     "data_path": "action_result.data.*.headers.*.Set-Cookie",
                     "data_type": "string",
                     "example_values": [
-                        "NID=158=HccET5f97JkzpL1ECD07_6PAgubd6rrnh_035wU92T_I21UT4OEGFcPhYog7JSFQ0Ob1TRCaajWLQ_96mELMVQMxj-2b6kY1yOfo9pX6t2oSv-1T1XzgtEgeFDSePBNskd1OCo_yfjzTaQdBTEYKR7kNRifN80NjxCv0mW4pW5I; expires=Fri, 02-Aug-2019 05:55:18 GMT; path=/; domain=.google.com; HttpOnly"
+                        "NID=158=HccET5f97JkzpL1ECD07_6PAgubd6rrnh_035wU92T_I21UT4OEGFcPhYog7JSFQ0Ob1TRCaajWLQ_96mELMVQMxj-2b6kY1yOfo9pX6t2oSv-1T1XzgtEgeFDSePBNskd1OCo_yfjzTaQdBTEYKR7kNRifN80NjxCv0mW4pW5I; expires=Fri, 02-Aug-2019 05:55:18 GMT; path=/; domain=.hackertarget.com; HttpOnly"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.headers.*.Strict-Transport-Security",
                     "data_type": "string",
-                    "column_name": "strict tsec",
+                    "column_name": "Strict Tsec",
                     "column_order": 11,
                     "example_values": [
                         "max-age=31536000"
@@ -173,16 +207,21 @@
                 {
                     "data_path": "action_result.data.*.headers.*.Vary",
                     "data_type": "string",
-                    "column_name": "vary",
+                    "column_name": "Vary",
                     "column_order": 9,
                     "example_values": [
                         "Accept-Encoding"
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.headers.*.X-Cache",
+                    "data_type": "string",
+                    "example_value": "404-HIT"
+                },
+                {
                     "data_path": "action_result.data.*.headers.*.X-Frame-Options",
                     "data_type": "string",
-                    "column_name": "xframe opt",
+                    "column_name": "Xframe Opt",
                     "column_order": 8,
                     "example_values": [
                         "SAMEORIGIN"
@@ -191,7 +230,7 @@
                 {
                     "data_path": "action_result.data.*.headers.*.X-XSS-Protection",
                     "data_type": "string",
-                    "column_name": "xss protect",
+                    "column_name": "Xss Protect",
                     "column_order": 3,
                     "example_values": [
                         "1; mode=block"
@@ -200,7 +239,7 @@
                 {
                     "data_path": "action_result.data.*.headers.*.http_version",
                     "data_type": "string",
-                    "column_name": "http version",
+                    "column_name": "Http Version",
                     "column_order": 1,
                     "example_values": [
                         "1.1"
@@ -209,7 +248,7 @@
                 {
                     "data_path": "action_result.data.*.headers.*.response_code",
                     "data_type": "string",
-                    "column_name": "response code",
+                    "column_name": "Response Code",
                     "column_order": 2,
                     "example_values": [
                         "200"
@@ -219,7 +258,7 @@
                     "data_path": "action_result.data.*.raw",
                     "data_type": "string",
                     "example_values": [
-                        "HTTP/1.1 200 OK\r\nDate: Thu, 31 Jan 2019 05:55:18 GMT\r\nExpires: -1\r\nCache-Control: private, max-age=0\r\nContent-Type: text/html; charset=UTF-8\r\nStrict-Transport-Security: max-age=31536000\r\nP3P: CP=This is not a P3P policy! See g.co/p3phelp for more info.\r\nServer: gws\r\nX-XSS-Protection: 1; mode=block\r\nX-Frame-Options: SAMEORIGIN\r\nSet-Cookie: 1P_JAR=2019-01-31-05; expires=Sat, 02-Mar-2019 05:55:18 GMT; path=/; domain=.google.com\r\nSet-Cookie: NID=158=HccET5f97JkzpL1ECD07_6PAgubd6rrnh_035wU92T_I21UT4OEGFcPhYog7JSFQ0Ob1TRCaajWLQ_96mELMVQMxj-2b6kY1yOfo9pX6t2oSv-1T1XzgtEgeFDSePBNskd1OCo_yfjzTaQdBTEYKR7kNRifN80NjxCv0mW4pW5I; expires=Fri, 02-Aug-2019 05:55:18 GMT; path=/; domain=.google.com; HttpOnly\r\nTransfer-Encoding: chunked\r\nAlt-Svc: quic=:443; ma=2592000; v=44,43,39\r\nAccept-Ranges: none\r\nVary: Accept-Encoding\r\n\r\n"
+                        "HTTP/1.1 200 OK\r\nDate: Thu, 31 Jan 2019 05:55:18 GMT\r\nExpires: -1\r\nCache-Control: private, max-age=0\r\nContent-Type: text/html; charset=UTF-8\r\nStrict-Transport-Security: max-age=31536000\r\nP3P: CP=This is not a P3P policy! See g.co/p3phelp for more info.\r\nServer: gws\r\nX-XSS-Protection: 1; mode=block\r\nX-Frame-Options: SAMEORIGIN\r\nSet-Cookie: 1P_JAR=2019-01-31-05; expires=Sat, 02-Mar-2019 05:55:18 GMT; path=/; domain=hackertarget.com\r\nSet-Cookie: NID=158=HccET5f97JkzpL1ECD07_6PAgubd6rrnh_035wU92T_I21UT4OEGFcPhYog7JSFQ0Ob1TRCaajWLQ_96mELMVQMxj-2b6kY1yOfo9pX6t2oSv-1T1XzgtEgeFDSePBNskd1OCo_yfjzTaQdBTEYKR7kNRifN80NjxCv0mW4pW5I; expires=Fri, 02-Aug-2019 05:55:18 GMT; path=/; domain=.hackertarget.com; HttpOnly\r\nTransfer-Encoding: chunked\r\nAlt-Svc: quic=:443; ma=2592000; v=44,43,39\r\nAccept-Ranges: none\r\nVary: Accept-Encoding\r\n\r\n"
                     ]
                 },
                 {
@@ -282,7 +321,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -308,7 +348,7 @@
                 {
                     "data_path": "action_result.data.*.urls.*.url",
                     "data_type": "string",
-                    "column_name": "URLS",
+                    "column_name": "Urls",
                     "column_order": 0,
                     "contains": [
                         "url"
@@ -377,7 +417,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -444,7 +485,7 @@
                 {
                     "data_path": "action_result.data.*.hop.*.stdev",
                     "data_type": "string",
-                    "column_name": "Std_Dev",
+                    "column_name": "Std Dev",
                     "column_order": 8
                 },
                 {
@@ -983,7 +1024,7 @@
         },
         {
             "action": "traceroute ip",
-            "description": "Traceroute to an ip",
+            "description": "Traceoute to an IP",
             "type": "investigate",
             "identifier": "traceroute_ip",
             "read_only": true,
@@ -1011,7 +1052,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -1078,7 +1120,7 @@
                 {
                     "data_path": "action_result.data.*.hop.*.stdev",
                     "data_type": "string",
-                    "column_name": "Std_Dev",
+                    "column_name": "Std Dev",
                     "column_order": 8
                 },
                 {
@@ -1795,7 +1837,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -1828,7 +1871,7 @@
                     "contains": [
                         "ip"
                     ],
-                    "column_name": "Related IPs",
+                    "column_name": "Related Ips",
                     "column_order": 1,
                     "example_values": [
                         "204.107.141.245"
@@ -1840,6 +1883,16 @@
                     "example_values": [
                         1
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.ip_addresses.*.domain_count",
+                    "data_type": "numeric",
+                    "example_value": 1
+                },
+                {
+                    "data_path": "action_result.data.*.ip_addresses.*.ip_address",
+                    "data_type": "string",
+                    "example_value": "No"
                 },
                 {
                     "data_path": "action_result.data.*.raw",
@@ -1895,7 +1948,7 @@
         },
         {
             "action": "reverse ip",
-            "description": "Find domains that resolve to this ip",
+            "description": "Find domains that resolve to this IP",
             "type": "investigate",
             "identifier": "reverse_ip",
             "read_only": true,
@@ -1904,8 +1957,7 @@
                     "description": "IP to query",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "ip"
                     ],
                     "primary": true,
                     "required": true,
@@ -1923,7 +1975,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -1933,8 +1986,7 @@
                         "2.2.2.2"
                     ],
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "ip"
                     ]
                 },
                 {
@@ -1951,6 +2003,21 @@
                     "column_name": "Related Domains"
                 },
                 {
+                    "data_path": "action_result.data.*.ip_addresses.*.domain_count",
+                    "data_type": "numeric",
+                    "example_value": 1
+                },
+                {
+                    "data_path": "action_result.data.*.ip_addresses.*.ip_address",
+                    "data_type": "string",
+                    "example_value": "8.8.8.8"
+                },
+                {
+                    "data_path": "action_result.data.*.raw",
+                    "data_type": "string",
+                    "example_value": "8.8.8.8 dns.google"
+                },
+                {
                     "data_path": "action_result.summary.total_domains",
                     "data_type": "numeric",
                     "example_values": [
@@ -1959,6 +2026,11 @@
                     "contains": [
                         "domain"
                     ]
+                },
+                {
+                    "data_path": "action_result.summary.total_ips",
+                    "data_type": "numeric",
+                    "example_value": 1
                 },
                 {
                     "data_path": "action_result.message",
@@ -1995,8 +2067,7 @@
                     "description": "IP to query",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "ip"
                     ],
                     "primary": true,
                     "required": true,
@@ -2006,25 +2077,25 @@
             "render": {
                 "width": 12,
                 "title": "Whois IP",
-                "type": "json",
+                "type": "table",
                 "height": 5
             },
             "output": [
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
+                    "column_name": "Status",
                     "column_order": 1,
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "ip"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -2033,19 +2104,9 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.#_available_at",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://www.arin.net/whois_tou.html"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.Address",
                     "data_type": "string",
-                    "column_name": "address",
+                    "column_name": "Address",
                     "column_order": 3,
                     "example_values": [
                         "1600 Amphitheatre Parkway"
@@ -2054,7 +2115,7 @@
                 {
                     "data_path": "action_result.data.*.CIDR",
                     "data_type": "string",
-                    "column_name": "cidr",
+                    "column_name": "CIDR",
                     "column_order": 2,
                     "example_values": [
                         "8.8.8.0/24"
@@ -2063,7 +2124,7 @@
                 {
                     "data_path": "action_result.data.*.City",
                     "data_type": "string",
-                    "column_name": "city",
+                    "column_name": "City",
                     "column_order": 4,
                     "example_values": [
                         "Mountain View"
@@ -2079,7 +2140,7 @@
                 {
                     "data_path": "action_result.data.*.Country",
                     "data_type": "string",
-                    "column_name": "country",
+                    "column_name": "Country",
                     "column_order": 5,
                     "example_values": [
                         "US"
@@ -2116,6 +2177,8 @@
                 {
                     "data_path": "action_result.data.*.OrgAbuseEmail",
                     "data_type": "string",
+                    "column_name": "Abuse Email",
+                    "column_order": 9,
                     "contains": [
                         "email"
                     ],
@@ -2142,7 +2205,9 @@
                     "data_type": "string",
                     "example_values": [
                         "+1-650-253-0000"
-                    ]
+                    ],
+                    "column_name": "Abuse Phone",
+                    "column_order": 10
                 },
                 {
                     "data_path": "action_result.data.*.OrgAbuseRef",
@@ -2164,8 +2229,6 @@
                 {
                     "data_path": "action_result.data.*.OrgNOCEmail",
                     "data_type": "string",
-                    "column_name": "abuse email",
-                    "column_order": 9,
                     "contains": [
                         "email"
                     ]
@@ -2180,9 +2243,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.OrgNOCPhone",
-                    "data_type": "string",
-                    "column_name": "abuse phone",
-                    "column_order": 10
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.OrgNOCRef",
@@ -2191,7 +2252,7 @@
                 {
                     "data_path": "action_result.data.*.OrgName",
                     "data_type": "string",
-                    "column_name": "org name",
+                    "column_name": "Org Name",
                     "column_order": 6,
                     "example_values": [
                         "Google LLC"
@@ -2247,10 +2308,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.OriginAS",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Parent",
@@ -2279,7 +2337,7 @@
                 {
                     "data_path": "action_result.data.*.RegDate",
                     "data_type": "string",
-                    "column_name": "reg date",
+                    "column_name": "Reg Date",
                     "column_order": 7,
                     "example_values": [
                         "2000-03-30"
@@ -2295,7 +2353,7 @@
                 {
                     "data_path": "action_result.data.*.Updated",
                     "data_type": "string",
-                    "column_name": "updated",
+                    "column_name": "Updated",
                     "column_order": 8,
                     "example_values": [
                         "2018-10-24"
@@ -2313,11 +2371,13 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.summary.CIDR",
                     "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "example_value": "8.0.0.0/9, 8.8.8.0/24"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -2365,7 +2425,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2505,13 +2566,13 @@
                     ],
                     "contains": [
                         "domain"
-                    ]
+                    ],
+                    "column_name": "Status",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.Expiration_Date",
-                    "data_type": "string",
-                    "column_name": "Expiration Date",
-                    "column_order": 5
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.NOTICE",
@@ -2571,8 +2632,6 @@
                 {
                     "data_path": "action_result.data.*.Registrant_Name",
                     "data_type": "string",
-                    "column_name": "Registrant Name",
-                    "column_order": 2,
                     "example_values": [
                         "Domain Administrator"
                     ]
@@ -2626,7 +2685,9 @@
                     "data_type": "string",
                     "example_values": [
                         "MarkMonitor, Inc."
-                    ]
+                    ],
+                    "column_name": "Registrant Name",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.Registrar_Abuse_Contact_Email",
@@ -2663,6 +2724,11 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.Registrar_WHOIS_Server",
+                    "data_type": "string",
+                    "example_value": "whois.godaddy.com"
+                },
+                {
                     "data_path": "action_result.data.*.Registry_Admin_ID",
                     "data_type": "string",
                     "example_values": [
@@ -2684,7 +2750,9 @@
                     "data_type": "string",
                     "example_values": [
                         "2021-08-21T23:59:59Z"
-                    ]
+                    ],
+                    "column_name": "Expiration Date",
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.Registry_Registrant_ID",
@@ -2706,9 +2774,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.Status",
-                    "data_type": "string",
-                    "column_name": "Status",
-                    "column_order": 1
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Tech_Application_Purpose",
@@ -2825,11 +2891,13 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.summary.Domain",
                     "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "example_value": "GOOGLE.COM"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -2877,7 +2945,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2895,7 +2964,7 @@
                 {
                     "data_path": "action_result.data.*.failed",
                     "data_type": "string",
-                    "column_name": "failed",
+                    "column_name": "Failed",
                     "column_order": 2
                 },
                 {
@@ -2908,13 +2977,13 @@
                 {
                     "data_path": "action_result.data.*.sent",
                     "data_type": "string",
-                    "column_name": "sent",
+                    "column_name": "Sent",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.succeeded",
                     "data_type": "string",
-                    "column_name": "succeeded",
+                    "column_name": "Succeeded",
                     "column_order": 2
                 },
                 {
@@ -2922,11 +2991,23 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.summary.failed",
                     "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "example_value": "0"
+                },
+                {
+                    "data_path": "action_result.summary.received",
+                    "data_type": "string",
+                    "example_value": "4"
+                },
+                {
+                    "data_path": "action_result.summary.sent",
+                    "data_type": "string",
+                    "example_value": "4"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -2947,7 +3028,7 @@
         },
         {
             "action": "ping ip",
-            "description": "Ping an ip",
+            "description": "Ping an IP",
             "type": "investigate",
             "identifier": "ping_ip",
             "read_only": true,
@@ -2959,8 +3040,7 @@
                     "primary": true,
                     "required": true,
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "ip"
                     ]
                 }
             },
@@ -2975,15 +3055,15 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip",
-                        "ipv6"
+                        "ip"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -2994,7 +3074,7 @@
                 {
                     "data_path": "action_result.data.*.failed",
                     "data_type": "string",
-                    "column_name": "failed",
+                    "column_name": "Failed",
                     "column_order": 2
                 },
                 {
@@ -3007,13 +3087,13 @@
                 {
                     "data_path": "action_result.data.*.sent",
                     "data_type": "string",
-                    "column_name": "sent",
+                    "column_name": "Sent",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.succeeded",
                     "data_type": "string",
-                    "column_name": "succeeded",
+                    "column_name": "Succeeded",
                     "column_order": 2
                 },
                 {
@@ -3021,11 +3101,23 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.summary.failed",
                     "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "example_value": "0"
+                },
+                {
+                    "data_path": "action_result.summary.received",
+                    "data_type": "string",
+                    "example_value": "4"
+                },
+                {
+                    "data_path": "action_result.summary.sent",
+                    "data_type": "string",
+                    "example_value": "4"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -3046,7 +3138,7 @@
         },
         {
             "action": "geolocate ip",
-            "description": "Geolocate an ip",
+            "description": "Geolocate an IP",
             "type": "investigate",
             "identifier": "geolocate_ip",
             "read_only": true,
@@ -3074,7 +3166,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -3092,19 +3185,15 @@
                 {
                     "data_path": "action_result.data.*.city_name",
                     "data_type": "string",
-                    "column_name": "city name",
-                    "column_order": 2,
-                    "example_values": [
-                        ""
-                    ]
+                    "column_name": "City Name",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.country_name",
                     "data_type": "string",
-                    "column_name": "country",
+                    "column_name": "Country",
                     "column_order": 1,
                     "example_values": [
-                        "Republic of Korea",
                         "United States"
                     ]
                 },
@@ -3114,7 +3203,7 @@
                     "contains": [
                         "ip"
                     ],
-                    "column_name": "ip",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
                         "1.101.103.48",
@@ -3124,7 +3213,7 @@
                 {
                     "data_path": "action_result.data.*.latitude",
                     "data_type": "string",
-                    "column_name": "latitude",
+                    "column_name": "Latitude",
                     "column_order": 4,
                     "example_values": [
                         "37.5112",
@@ -3134,7 +3223,7 @@
                 {
                     "data_path": "action_result.data.*.longitude",
                     "data_type": "string",
-                    "column_name": "longitude",
+                    "column_name": "Longitude",
                     "column_order": 5,
                     "example_values": [
                         "126.9741",
@@ -3152,22 +3241,26 @@
                 {
                     "data_path": "action_result.data.*.state_name",
                     "data_type": "string",
-                    "column_name": "state",
-                    "column_order": 3,
-                    "example_values": [
-                        ""
-                    ]
+                    "column_name": "State",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.summary.latitude",
                     "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "example_value": "37.751"
+                },
+                {
+                    "data_path": "action_result.summary.longitude",
+                    "data_type": "string",
+                    "example_value": "-97.822"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -3216,7 +3309,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -3233,7 +3327,7 @@
                 {
                     "data_path": "action_result.data.*.city_name",
                     "data_type": "string",
-                    "column_name": "city name",
+                    "column_name": "City Name",
                     "column_order": 2,
                     "example_values": [
                         "Bluffdale"
@@ -3242,7 +3336,7 @@
                 {
                     "data_path": "action_result.data.*.country_name",
                     "data_type": "string",
-                    "column_name": "country",
+                    "column_name": "Country",
                     "column_order": 1,
                     "example_values": [
                         "United States"
@@ -3254,7 +3348,7 @@
                     "contains": [
                         "ip"
                     ],
-                    "column_name": "ip",
+                    "column_name": "IP",
                     "column_order": 0,
                     "example_values": [
                         "216.58.217.110"
@@ -3263,7 +3357,7 @@
                 {
                     "data_path": "action_result.data.*.latitude",
                     "data_type": "string",
-                    "column_name": "latitude",
+                    "column_name": "Latitude",
                     "column_order": 4,
                     "example_values": [
                         "40.4954"
@@ -3272,7 +3366,7 @@
                 {
                     "data_path": "action_result.data.*.longitude",
                     "data_type": "string",
-                    "column_name": "longitude",
+                    "column_name": "Longitude",
                     "column_order": 5,
                     "example_values": [
                         "-111.9444"
@@ -3288,7 +3382,7 @@
                 {
                     "data_path": "action_result.data.*.state_name",
                     "data_type": "string",
-                    "column_name": "state",
+                    "column_name": "State",
                     "column_order": 3,
                     "example_values": [
                         "Utah"
@@ -3299,11 +3393,18 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.summary.latitude",
                     "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "example_value": "39.0481"
+                },
+                {
+                    "data_path": "action_result.summary.longitude",
+                    "data_type": "string",
+                    "example_value": "-77.4728"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
