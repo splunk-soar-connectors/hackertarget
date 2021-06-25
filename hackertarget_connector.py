@@ -142,7 +142,7 @@ class HackerTargetConnector(BaseConnector):
                 time.sleep(SLEEP_SECS)
                 retry_count -= 1
 
-        if phantom.is_fail(r.status_code) or r.text is False:
+        if phantom.is_fail(r.status_code) or r.text is False or r.text == HACKERTARGET_INVALID_KEY:
             self.debug_print('FAILURE: Found in the app response.\nResponse: {}'.format(r.text))
             return phantom.APP_ERROR, r.text
 
@@ -226,7 +226,7 @@ class HackerTargetConnector(BaseConnector):
                     # Set the Status
                     return action_result.set_status(phantom.APP_SUCCESS)
             else:
-                return phantom.APP_ERROR
+                return action_result.set_status(phantom.APP_ERROR, response)
         except Exception as e:
             return action_result.set_status(phantom.APP_ERROR, "Unable to execute geolocate domain. Error:{0}".format(e)), None
 
@@ -289,7 +289,7 @@ class HackerTargetConnector(BaseConnector):
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
-            return phantom.APP_ERROR
+            return action_result.set_status(phantom.APP_ERROR, response)
 
     def _reverse_ip(self, param):
         """ Action handler for the '_reverse_ip' action"""
@@ -340,7 +340,7 @@ class HackerTargetConnector(BaseConnector):
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
-            return phantom.APP_ERROR
+            return action_result.set_status(phantom.APP_ERROR, response)
 
     def _ping_host(self, param):
         """ Action handler for the '_ping_host' action"""
@@ -454,7 +454,7 @@ class HackerTargetConnector(BaseConnector):
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
-            return phantom.APP_ERROR
+            return action_result.set_status(phantom.APP_ERROR, response)
 
     def _whois_domain(self, param):
         """ Action handler for the 'whois_domain' action"""
@@ -512,7 +512,7 @@ class HackerTargetConnector(BaseConnector):
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
-            return phantom.APP_ERROR
+            return action_result.set_status(phantom.APP_ERROR, response)
 
     def _get_http_headers(self, param):
         """ Action handler for the 'get_http_headers' action"""
@@ -565,7 +565,7 @@ class HackerTargetConnector(BaseConnector):
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
-            return phantom.APP_ERROR
+            return action_result.set_status(phantom.APP_ERROR, response)
 
     def _get_http_links(self, param):
         """ Action handler for the 'get_http_links' action"""
@@ -611,7 +611,7 @@ class HackerTargetConnector(BaseConnector):
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
-            return phantom.APP_ERROR
+            return action_result.set_status(phantom.APP_ERROR, response)
 
     def _traceroute_host(self, param):
         """ Action handler for the 'run traceroute' action"""
@@ -675,7 +675,7 @@ class HackerTargetConnector(BaseConnector):
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
-            return phantom.APP_ERROR
+            return action_result.set_status(phantom.APP_ERROR, response)
 
     def handle_action(self, param):
         """Function that handles all the actions"""
