@@ -15,18 +15,18 @@
 #
 #
 # Phantom imports
+import ipaddress
+import re
+import time
+
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
+import requests
+import simplejson as json
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 # THIS Connector imports
 from hackertarget_consts import *
-
-import requests
-import time
-import re
-import simplejson as json
-import ipaddress
 
 
 class HackerTargetConnector(BaseConnector):
@@ -115,8 +115,13 @@ class HackerTargetConnector(BaseConnector):
         # Set the status of the connector result
         return self.set_status_save_progress(phantom.APP_SUCCESS, SUCC_CONNECTIVITY_TEST)
 
-    def _make_rest_call(self, endpoint, action_result, headers={}, params={}, data=None, method="get"):
+    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
         """ Function that makes the REST call to the device, generic function that can be called from various action handlers"""
+
+        if headers is None:
+            headers = {}
+        if params is None:
+            params = {}
 
         # Create the headers
         headers.update(self._headers)
@@ -139,8 +144,12 @@ class HackerTargetConnector(BaseConnector):
         success = False
         while not success and (retry_count > 0):
             try:
-                r = request_func(self._base_url + self._api_uri + endpoint,  # The complete url is made up of the base_url, the api url and the endpiont
-                        data=json.dumps(data) if data else None,  # the data, converted to json string format if present, else just set to None
+                """
+                The complete url is made up of the base_url, the api url and the endpiont
+                The data is converted to json string format if present, else just set to None
+                """
+                r = request_func(self._base_url + self._api_uri + endpoint,
+                        data=json.dumps(data) if data else None,
                         headers=headers,  # The headers to send in the HTTP call
                         params=params)  # uri parameters if any
             except Exception as e:
@@ -157,7 +166,10 @@ class HackerTargetConnector(BaseConnector):
             return phantom.APP_ERROR, r.text
 
         if r.text:
-            if HACKERTARGET_INPUT_INVALID.lower() in r.text.lower() or HACKERTARGET_NO_RESULTS.lower() in r.text.lower() or HACKERTARGET_FAIL_ERROR in r.text:
+            if HACKERTARGET_INPUT_INVALID.lower() in r.text.lower() \
+               or HACKERTARGET_NO_RESULTS.lower() in r.text.lower() \
+               or HACKERTARGET_FAIL_ERROR in r.text:
+
                 self.debug_print('FAILURE: Found in the app response.\nResponse: {}'.format(r.text))
                 return phantom.APP_SUCCESS, r.text
 
@@ -285,7 +297,8 @@ class HackerTargetConnector(BaseConnector):
                             tempresponse_data[domain_name]['ip_addresses'].append(ip_addrs.split(','))
                             tempresponse_data[domain_name]['ip_count'] += len(ip_addrs.split(','))
                         else:
-                            tempresponse_data[domain_name] = {'domain': domain_name, 'ip_addresses': ip_addrs.split(','), 'ip_count': len(ip_addrs.split(','))}
+                            tempresponse_data[domain_name] = {'domain': domain_name,
+                                'ip_addresses': ip_addrs.split(','), 'ip_count': len(ip_addrs.split(','))}
                     else:
                         self.debug_print("Skipping current response line - {}".format(line))
                 ip_count_total = 0
@@ -401,7 +414,8 @@ class HackerTargetConnector(BaseConnector):
 
                 # Set the summary and response data
                 action_result.add_data(response_data)
-                action_result.set_summary({'sent': response_data['sent'][0], 'received': response_data['succeeded'][0], 'failed': response_data['failed'][0]})
+                action_result.set_summary({'sent': response_data['sent'][0],
+                                          'received': response_data['succeeded'][0], 'failed': response_data['failed'][0]})
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -734,6 +748,7 @@ if __name__ == '__main__':
 
     # Imports
     import sys
+
     import pudb
 
     # Breakpoint at runtime
@@ -759,4 +774,4 @@ if __name__ == '__main__':
         # Dump the return value
         print(ret_val)
 
-    exit(0)
+    sys.exit(0)
