@@ -5,8 +5,8 @@
     "type": "information",
     "publisher": "Splunk",
     "main_module": "hackertarget_connector.py",
-    "app_version": "2.0.5",
-    "utctime_updated": "2022-01-07T20:29:08.000000Z",
+    "app_version": "2.0.6",
+    "utctime_updated": "2022-01-27T20:56:55.000000Z",
     "package_name": "phantom_hackertarget",
     "product_vendor": "HackerTarget",
     "product_name": "HackerTarget",
@@ -2973,7 +2973,7 @@
                     "data_type": "string",
                     "column_name": "Failed",
                     "column_order": 2
-                },                
+                },
                 {
                     "data_path": "action_result.data.*.succeeded",
                     "data_type": "string",
