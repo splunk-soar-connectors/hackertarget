@@ -2,11 +2,11 @@
 # HackerTarget
 
 Publisher: Splunk  
-Connector Version: 2\.0\.4  
+Connector Version: 2\.0\.7  
 Product Vendor: HackerTarget  
 Product Name: HackerTarget  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 4\.9\.39220  
+Minimum Product Version: 5\.1\.0  
 
 This app supports executing investigative actions to analyze a host
 
@@ -547,10 +547,10 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
 action\_result\.parameter\.domain | string |  `domain` 
-action\_result\.data\.\*\.failed | string | 
-action\_result\.data\.\*\.raw | string | 
 action\_result\.data\.\*\.sent | string | 
+action\_result\.data\.\*\.failed | string | 
 action\_result\.data\.\*\.succeeded | string | 
+action\_result\.data\.\*\.raw | string | 
 action\_result\.summary | string | 
 action\_result\.summary\.failed | string | 
 action\_result\.summary\.received | string | 
@@ -575,10 +575,10 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
 action\_result\.parameter\.ip | string |  `ip` 
-action\_result\.data\.\*\.failed | string | 
-action\_result\.data\.\*\.raw | string | 
 action\_result\.data\.\*\.sent | string | 
+action\_result\.data\.\*\.failed | string | 
 action\_result\.data\.\*\.succeeded | string | 
+action\_result\.data\.\*\.raw | string | 
 action\_result\.summary | string | 
 action\_result\.summary\.failed | string | 
 action\_result\.summary\.received | string | 
