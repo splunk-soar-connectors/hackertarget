@@ -5,17 +5,18 @@
     "type": "information",
     "publisher": "Splunk",
     "main_module": "hackertarget_connector.py",
-    "app_version": "2.0.4",
-    "utctime_updated": "2021-06-28T06:15:16.000000Z",
+    "app_version": "2.0.7",
+    "utctime_updated": "2022-02-03T20:36:10.000000Z",
     "package_name": "phantom_hackertarget",
     "product_vendor": "HackerTarget",
     "product_name": "HackerTarget",
     "product_version_regex": ".*",
-    "min_phantom_version": "4.9.39220",
+    "min_phantom_version": "5.1.0",
     "logo": "logo_hackertarget.svg",
     "logo_dark": "logo_hackertarget_dark.svg",
-    "license": "Copyright (c) 2016-2021 Splunk Inc.",
+    "license": "Copyright (c) 2016-2022 Splunk Inc.",
     "python_version": "3",
+    "fips_compliant": true,
     "latest_tested_version": [
         "cloud, api/v1 tested on 23rd June, 2021"
     ],
@@ -2962,10 +2963,22 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.sent",
+                    "data_type": "string",
+                    "column_name": "Sent",
+                    "column_order": 1
+                },
+                {
                     "data_path": "action_result.data.*.failed",
                     "data_type": "string",
                     "column_name": "Failed",
                     "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.succeeded",
+                    "data_type": "string",
+                    "column_name": "Succeeded",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.raw",
@@ -2973,18 +2986,6 @@
                     "example_values": [
                         "\nStarting Nping 0.7.70 ( https://nmap.org/nping ) at 2019-01-31 07:46 UTC\nSENT (0.0091s) ICMP [104.237.144.6 > 172.217.10.110 Echo request (type=8/code=0) id=667 seq=1] IP [ttl=64 id=40823 iplen=28 ]\nRCVD (0.2114s) ICMP [172.217.10.110 > 104.237.144.6 Echo reply (type=0/code=0) id=667 seq=1] IP [ttl=58 id=0 iplen=28 ]\nSENT (1.0095s) ICMP [104.237.144.6 > 172.217.10.110 Echo request (type=8/code=0) id=667 seq=3] IP [ttl=64 id=40823 iplen=28 ]\nRCVD (1.0274s) ICMP [172.217.10.110 > 104.237.144.6 Echo reply (type=0/code=0) id=667 seq=3] IP [ttl=58 id=0 iplen=28 ]\nSENT (2.0107s) ICMP [104.237.144.6 > 172.217.10.110 Echo request (type=8/code=0) id=667 seq=3] IP [ttl=64 id=40823 iplen=28 ]\nRCVD (2.0474s) ICMP [172.217.10.110 > 104.237.144.6 Echo reply (type=0/code=0) id=667 seq=3] IP [ttl=58 id=0 iplen=28 ]\nSENT (3.0115s) ICMP [104.237.144.6 > 172.217.10.110 Echo request (type=8/code=0) id=667 seq=4] IP [ttl=64 id=40823 iplen=28 ]\nRCVD (3.0673s) ICMP [172.217.10.110 > 104.237.144.6 Echo reply (type=0/code=0) id=667 seq=4] IP [ttl=58 id=0 iplen=28 ]\n \nMax rtt: 202.319ms | Min rtt: 18.054ms | Avg rtt: 78.107ms\nRaw packets sent: 4 (112B) | Rcvd: 4 (184B) | Lost: 0 (0.00%)\nNping done: 1 IP address pinged in 3.07 seconds\n"
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.sent",
-                    "data_type": "string",
-                    "column_name": "Sent",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.succeeded",
-                    "data_type": "string",
-                    "column_name": "Succeeded",
-                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.summary",
@@ -3072,10 +3073,22 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.sent",
+                    "data_type": "string",
+                    "column_name": "Sent",
+                    "column_order": 1
+                },
+                {
                     "data_path": "action_result.data.*.failed",
                     "data_type": "string",
                     "column_name": "Failed",
                     "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.succeeded",
+                    "data_type": "string",
+                    "column_name": "Succeeded",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.raw",
@@ -3083,18 +3096,6 @@
                     "example_values": [
                         "\nStarting Nping 0.7.70 ( https://nmap.org/nping ) at 2019-01-31 07:48 UTC\nSENT (0.0045s) ICMP [104.237.144.6 > 8.8.8.8 Echo request (type=8/code=0) id=54952 seq=2] IP [ttl=64 id=33659 iplen=28 ]\nRCVD (0.2052s) ICMP [8.8.8.8 > 104.237.144.6 Echo reply (type=0/code=0) id=54952 seq=2] IP [ttl=124 id=59028 iplen=28 ]\nSENT (1.0045s) ICMP [104.237.144.6 > 8.8.8.8 Echo request (type=8/code=0) id=54952 seq=3] IP [ttl=64 id=33659 iplen=28 ]\nRCVD (1.0212s) ICMP [8.8.8.8 > 104.237.144.6 Echo reply (type=0/code=0) id=54952 seq=3] IP [ttl=124 id=59332 iplen=28 ]\nSENT (2.0065s) ICMP [104.237.144.6 > 8.8.8.8 Echo request (type=8/code=0) id=54952 seq=3] IP [ttl=64 id=33659 iplen=28 ]\nRCVD (2.0411s) ICMP [8.8.8.8 > 104.237.144.6 Echo reply (type=0/code=0) id=54952 seq=3] IP [ttl=124 id=60050 iplen=28 ]\nSENT (3.0082s) ICMP [104.237.144.6 > 8.8.8.8 Echo request (type=8/code=0) id=54952 seq=4] IP [ttl=64 id=33659 iplen=28 ]\nRCVD (3.0612s) ICMP [8.8.8.8 > 104.237.144.6 Echo reply (type=0/code=0) id=54952 seq=4] IP [ttl=124 id=60422 iplen=28 ]\n \nMax rtt: 200.698ms | Min rtt: 16.681ms | Avg rtt: 76.145ms\nRaw packets sent: 4 (112B) | Rcvd: 4 (184B) | Lost: 0 (0.00%)\nNping done: 1 IP address pinged in 3.06 seconds\n"
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.sent",
-                    "data_type": "string",
-                    "column_name": "Sent",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.succeeded",
-                    "data_type": "string",
-                    "column_name": "Succeeded",
-                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.summary",
@@ -3423,5 +3424,61 @@
             ],
             "versions": "EQ(*)"
         }
-    ]
+    ],
+    "pip_dependencies": {
+        "wheel": [
+            {
+                "module": "certifi",
+                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "simplejson",
+                "input_file": "wheels/py36/simplejson-3.17.2-cp36-cp36m-manylinux2010_x86_64.manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
+            }
+        ]
+    },
+    "pip39_dependencies": {
+        "wheel": [
+            {
+                "module": "certifi",
+                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "simplejson",
+                "input_file": "wheels/py39/simplejson-3.17.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
+            }
+        ]
+    }
 }
