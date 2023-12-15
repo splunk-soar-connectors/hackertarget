@@ -14,7 +14,7 @@
     "min_phantom_version": "5.1.0",
     "logo": "logo_hackertarget.svg",
     "logo_dark": "logo_hackertarget_dark.svg",
-    "license": "Copyright (c) 2016-2022 Splunk Inc.",
+    "license": "Copyright (c) 2016-2023 Splunk Inc.",
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_version": [
