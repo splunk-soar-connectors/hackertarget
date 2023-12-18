@@ -50,5 +50,5 @@ SLEEP_SECS = 15
 
 # cannot put 'error' in this list because it causes error when 'error' is present in domain name
 # replaced with all the error strings instead of the word "error"
-API_ERRORS = ['API count exceeded', 'no record', 'No PTR records found', 'error input', 'error input',
+API_ERR = ['API count exceeded', 'no record', 'No PTR records found', 'error input', 'error input',
                 'error check your search parameter', 'error check your api query', 'error getting result']
