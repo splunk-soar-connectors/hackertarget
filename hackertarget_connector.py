@@ -700,7 +700,7 @@ class HackerTargetConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
             return action_result.set_status(phantom.APP_ERROR, response)
-        
+
     def _get_headers(self, param):
         self._get_http_headers(param)
 
@@ -712,13 +712,13 @@ class HackerTargetConnector(BaseConnector):
 
     def _traceroute_ip(self, param):
         self._traceroute_host(param)
-    
+
     def _ping_domain(self, param):
         self._ping_host(param)
-    
+
     def _ping_ip(self, param):
         self._ping_host(param)
-    
+
     def _geolocate_ip(self, param):
         self._geolocate_domain(param)
 
