@@ -168,7 +168,7 @@ class HackerTargetConnector(BaseConnector):
         if r.text:
             if HACKERTARGET_INPUT_INVALID.lower() in r.text.lower() \
                or HACKERTARGET_NO_RESULTS.lower() in r.text.lower() \
-               or HACKERTARGET_FAIL_ERROR in r.text:
+               or HACKERTARGET_FAIL_ERR in r.text:
 
                 self.debug_print('FAILURE: Found in the app response.\nResponse: {}'.format(r.text))
                 return phantom.APP_SUCCESS, r.text
