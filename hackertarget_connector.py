@@ -1,6 +1,6 @@
 # File: hackertarget_connector.py
 #
-# Copyright (c) 2016-2022 Splunk Inc.
+# Copyright (c) 2016-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -168,7 +168,7 @@ class HackerTargetConnector(BaseConnector):
         if r.text:
             if HACKERTARGET_INPUT_INVALID.lower() in r.text.lower() \
                or HACKERTARGET_NO_RESULTS.lower() in r.text.lower() \
-               or HACKERTARGET_FAIL_ERROR in r.text:
+               or HACKERTARGET_FAIL_ERR in r.text:
 
                 self.debug_print('FAILURE: Found in the app response.\nResponse: {}'.format(r.text))
                 return phantom.APP_SUCCESS, r.text
@@ -277,7 +277,7 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERRORS:
+            for err in API_ERR:
                 if err in response:
                     error = True
                     break
@@ -341,7 +341,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERRORS:
+            for err in API_ERR:
                 if err in response:
                     error = True
                     break
@@ -395,7 +395,7 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERRORS:
+            for err in API_ERR:
                 if err in response:
                     error = True
                     break
@@ -450,7 +450,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERRORS:
+            for err in API_ERR:
                 if err in response:
                     error = True
                     break
@@ -508,7 +508,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERRORS:
+            for err in API_ERR:
                 if err in response:
                     error = True
                     break
@@ -667,7 +667,7 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERRORS:
+            for err in API_ERR:
                 if err in response:
                     error = True
                     break
@@ -701,6 +701,27 @@ class HackerTargetConnector(BaseConnector):
         else:
             return action_result.set_status(phantom.APP_ERROR, response)
 
+    def _get_headers(self, param):
+        self._get_http_headers(param)
+
+    def _get_links(self, param):
+        self._get_http_links(param)
+
+    def _traceroute_domain(self, param):
+        self._traceroute_host(param)
+
+    def _traceroute_ip(self, param):
+        self._traceroute_host(param)
+
+    def _ping_domain(self, param):
+        self._ping_host(param)
+
+    def _ping_ip(self, param):
+        self._ping_host(param)
+
+    def _geolocate_ip(self, param):
+        self._geolocate_domain(param)
+
     def handle_action(self, param):
         """Function that handles all the actions"""
 
@@ -711,13 +732,13 @@ class HackerTargetConnector(BaseConnector):
         ret_val = phantom.APP_SUCCESS
 
         if action == self.ACTION_ID_TRACEROUTE_IP:
-            ret_val = self._traceroute_host(param)
+            ret_val = self._traceroute_ip(param)
         elif action == self.ACTION_ID_TRACEROUTE_DOMAIN:
-            ret_val = self._traceroute_host(param)
+            ret_val = self._traceroute_domain(param)
         elif action == self.ACTION_ID_PING_IP:
-            ret_val = self._ping_host(param)
+            ret_val = self._ping_ip(param)
         elif action == self.ACTION_ID_PING_DOMAIN:
-            ret_val = self._ping_host(param)
+            ret_val = self._ping_domain(param)
         elif action == self.ACTION_ID_REVERSE_IP:
             ret_val = self._reverse_ip(param)
         elif action == self.ACTION_ID_REVERSE_DOMAIN:
@@ -727,13 +748,13 @@ class HackerTargetConnector(BaseConnector):
         elif action == self.ACTION_ID_WHOIS_DOMAIN:
             ret_val = self._whois_domain(param)
         elif action == self.ACTION_ID_GEOLOCATE_IP:
-            ret_val = self._geolocate_domain(param)
+            ret_val = self._geolocate_ip(param)
         elif action == self.ACTION_ID_GEOLOCATE_DOMAIN:
             ret_val = self._geolocate_domain(param)
         elif action == self.ACTION_ID_GET_HEADERS:
-            ret_val = self._get_http_headers(param)
+            ret_val = self._get_headers(param)
         elif action == self.ACTION_ID_GET_LINKS:
-            ret_val = self._get_http_links(param)
+            ret_val = self._get_links(param)
         elif action == phantom.ACTION_ID_TEST_ASSET_CONNECTIVITY:
             ret_val = self._test_connectivity(param)
 

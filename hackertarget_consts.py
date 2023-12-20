@@ -1,6 +1,6 @@
 # File: hackertarget_consts.py
 #
-# Copyright (c) 2016-2022 Splunk Inc.
+# Copyright (c) 2016-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ USING_BASE_URL = "Using url: {base_url}{api_uri}{endpoint}"
 HACKERTARGET_BASE_URL = "https://api.hackertarget.com/"
 HACKERTARGET_BASE_API = "/"
 # HACKERTARGET_MSG_GET_INFO = "Querying API availability info"
-HACKERTARGET_FAIL_ERROR = "error check your api query"
+HACKERTARGET_FAIL_ERR = "error check your api query"
 HACKERTARGET_INPUT_INVALID = "error input invalid"
 HACKERTARGET_NO_RESULTS = "No results found"
 # MSG_MAX_POLLS_REACHED = "Reached max polling attempts."
@@ -50,5 +50,5 @@ SLEEP_SECS = 15
 
 # cannot put 'error' in this list because it causes error when 'error' is present in domain name
 # replaced with all the error strings instead of the word "error"
-API_ERRORS = ['API count exceeded', 'no record', 'No PTR records found', 'error input', 'error input',
+API_ERR = ['API count exceeded', 'no record', 'No PTR records found', 'error input', 'error input',
                 'error check your search parameter', 'error check your api query', 'error getting result']
