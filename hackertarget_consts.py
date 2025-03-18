@@ -1,6 +1,6 @@
 # File: hackertarget_consts.py
 #
-# Copyright (c) 2016-2023 Splunk Inc.
+# Copyright (c) 2016-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,5 +50,13 @@ SLEEP_SECS = 15
 
 # cannot put 'error' in this list because it causes error when 'error' is present in domain name
 # replaced with all the error strings instead of the word "error"
-API_ERR = ['API count exceeded', 'no record', 'No PTR records found', 'error input', 'error input',
-                'error check your search parameter', 'error check your api query', 'error getting result']
+API_ERR = [
+    "API count exceeded",
+    "no record",
+    "No PTR records found",
+    "error input",
+    "error input",
+    "error check your search parameter",
+    "error check your api query",
+    "error getting result",
+]
