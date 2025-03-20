@@ -1,6 +1,6 @@
 # File: hackertarget_connector.py
 #
-# Copyright (c) 2016-2023 Splunk Inc.
+# Copyright (c) 2016-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ from hackertarget_consts import *
 
 
 class HackerTargetConnector(BaseConnector):
-
     # actions supported by this script
     ACTION_ID_TRACEROUTE_IP = "traceroute_ip"
     ACTION_ID_TRACEROUTE_DOMAIN = "traceroute_domain"
@@ -48,35 +47,35 @@ class HackerTargetConnector(BaseConnector):
     def __init__(self):
         self.__id_to_name = {}
         # Call the BaseConnectors init first
-        super(HackerTargetConnector, self).__init__()
+        super().__init__()
 
     def initialize(self):
-        """ Called once for every action, all member initializations occur here"""
+        """Called once for every action, all member initializations occur here"""
         config = self.get_config()
 
         # Get the Base URL from the asset config and so some cleanup
-        self._base_url = config.get('base_url', HACKERTARGET_BASE_URL)
-        if self._base_url.endswith('/'):
+        self._base_url = config.get("base_url", HACKERTARGET_BASE_URL)
+        if self._base_url.endswith("/"):
             self._base_url = self._base_url[:-1]
 
-        self._api_key = config.get('api_key', None)
+        self._api_key = config.get("api_key", None)
         # The host member extacts the host from the URL, is used in creating status messages
-        self._host = self._base_url[self._base_url.find('//') + 2:]
+        self._host = self._base_url[self._base_url.find("//") + 2 :]
 
         # The headers, initialize them here once and use them for all other REST calls
-        self._headers = {'Accept': 'application/json'}
+        self._headers = {"Accept": "application/json"}
 
-        self.set_validator('ipv6', self._is_ip)
+        self.set_validator("ipv6", self._is_ip)
 
         # The common part after the base url, but before the specific endpoint
         # Intiliazed here and used on every REST endpoint calls
         self._api_uri = HACKERTARGET_BASE_API
-        if self._api_uri.endswith('/'):
+        if self._api_uri.endswith("/"):
             self._api_uri = self._api_uri[:-1]
         return phantom.APP_SUCCESS
 
     def _is_ip(self, ip_address):
-        """ Function that checks given address and return True if address is valid IPv4 or IPV6 address.
+        """Function that checks given address and return True if address is valid IPv4 or IPV6 address.
 
         :param ip_address: IP address
         :return: status (success/failure)
@@ -85,13 +84,13 @@ class HackerTargetConnector(BaseConnector):
         try:
             ipaddress.ip_address(input_ip_address)
         except Exception as ex:
-            self.debug_print("Exception occurred in is_ip: {}".format(ex))
+            self.debug_print(f"Exception occurred in is_ip: {ex}")
             return False
 
         return True
 
     def _test_connectivity(self, param):
-        """ Function that handles the test connectivity action, it is much simpler than other action handlers."""
+        """Function that handles the test connectivity action, it is much simpler than other action handlers."""
 
         # Connectivity
         self.save_progress(phantom.APP_PROG_CONNECTING_TO_ELLIPSES, self._host)
@@ -116,7 +115,7 @@ class HackerTargetConnector(BaseConnector):
         return self.set_status_save_progress(phantom.APP_SUCCESS, SUCC_CONNECTIVITY_TEST)
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
-        """ Function that makes the REST call to the device, generic function that can be called from various action handlers"""
+        """Function that makes the REST call to the device, generic function that can be called from various action handlers"""
 
         if headers is None:
             headers = {}
@@ -126,11 +125,11 @@ class HackerTargetConnector(BaseConnector):
         # Create the headers
         headers.update(self._headers)
 
-        if method in ['put', 'post']:
-            headers.update({'Content-Type': 'application/json'})
+        if method in ["put", "post"]:
+            headers.update({"Content-Type": "application/json"})
 
         if self._api_key is not None:
-            params.update({'apikey': self._api_key})
+            params.update({"apikey": self._api_key})
 
         # get or post or put, whatever the caller asked us to use, if not specified the default will be 'get'
         request_func = getattr(requests, method)
@@ -148,12 +147,14 @@ class HackerTargetConnector(BaseConnector):
                 The complete url is made up of the base_url, the api url and the endpiont
                 The data is converted to json string format if present, else just set to None
                 """
-                r = request_func(self._base_url + self._api_uri + endpoint,
-                        data=json.dumps(data) if data else None,
-                        headers=headers,  # The headers to send in the HTTP call
-                        params=params)  # uri parameters if any
+                r = request_func(
+                    self._base_url + self._api_uri + endpoint,
+                    data=json.dumps(data) if data else None,
+                    headers=headers,  # The headers to send in the HTTP call
+                    params=params,
+                )  # uri parameters if any
             except Exception as e:
-                return action_result.set_status(phantom.APP_ERROR, ERR_SERVER_CONNECTION + ":{}".format(str(e))), None
+                return action_result.set_status(phantom.APP_ERROR, ERR_SERVER_CONNECTION + f":{e!s}"), None
 
             if r.status_code == 200:
                 success = True
@@ -162,15 +163,16 @@ class HackerTargetConnector(BaseConnector):
                 retry_count -= 1
 
         if phantom.is_fail(r.status_code) or r.text is False or r.text == HACKERTARGET_INVALID_KEY:
-            self.debug_print('FAILURE: Found in the app response.\nResponse: {}'.format(r.text))
+            self.debug_print(f"FAILURE: Found in the app response.\nResponse: {r.text}")
             return phantom.APP_ERROR, r.text
 
         if r.text:
-            if HACKERTARGET_INPUT_INVALID.lower() in r.text.lower() \
-               or HACKERTARGET_NO_RESULTS.lower() in r.text.lower() \
-               or HACKERTARGET_FAIL_ERR in r.text:
-
-                self.debug_print('FAILURE: Found in the app response.\nResponse: {}'.format(r.text))
+            if (
+                HACKERTARGET_INPUT_INVALID.lower() in r.text.lower()
+                or HACKERTARGET_NO_RESULTS.lower() in r.text.lower()
+                or HACKERTARGET_FAIL_ERR in r.text
+            ):
+                self.debug_print(f"FAILURE: Found in the app response.\nResponse: {r.text}")
                 return phantom.APP_SUCCESS, r.text
 
         # Handle/process any errors that we get back from the device
@@ -184,10 +186,10 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, message), None
 
         # Failure
-        return action_result.set_status(phantom.APP_ERROR, ERR_FROM_SERVER.format(status=r.status_code, detail=r.text.encode('utf-8'))), None
+        return action_result.set_status(phantom.APP_ERROR, ERR_FROM_SERVER.format(status=r.status_code, detail=r.text.encode("utf-8"))), None
 
     def _geolocate_domain(self, param):
-        """ Action handler for the '_ping_host' action"""
+        """Action handler for the '_ping_host' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -206,10 +208,10 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        if param.get('ip'):
-            request_params = {'q': param.get('ip')}
+        if param.get("ip"):
+            request_params = {"q": param.get("ip")}
         else:
-            request_params = {'q': param.get('domain')}
+            request_params = {"q": param.get("domain")}
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -217,43 +219,43 @@ class HackerTargetConnector(BaseConnector):
             ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
 
             if ret_val:
-                if 'error' in response:  # summary has been set to error per rest pull code, exit with success
-                    if param.get('domain'):
+                if "error" in response:  # summary has been set to error per rest pull code, exit with success
+                    if param.get("domain"):
                         response = "Error: Invalid input. Enter the valid domain."
                     return action_result.set_status(phantom.APP_SUCCESS, response)
                 else:
-                    response_data = {'raw': response}
-                    response = response.split('\n')
+                    response_data = {"raw": response}
+                    response = response.split("\n")
                     for line in response:
-                        linedata = (line.strip().split(':'))
+                        linedata = line.strip().split(":")
                         if len(linedata) > 1:
                             if "state" in linedata[0].lower():  # make same as maxmind
-                                response_data['state_name'] = linedata[1].strip()
+                                response_data["state_name"] = linedata[1].strip()
                             elif "city" in linedata[0].lower():
-                                response_data['city_name'] = linedata[1].strip()
+                                response_data["city_name"] = linedata[1].strip()
                             elif "country" in linedata[0].lower():
-                                response_data['country_name'] = linedata[1].strip()
+                                response_data["country_name"] = linedata[1].strip()
                             elif "ip" in linedata[0].lower():
-                                response_data['ip'] = linedata[1].strip()
+                                response_data["ip"] = linedata[1].strip()
                             elif "latitude" in linedata[0].lower():
-                                response_data['latitude'] = linedata[1].strip()
+                                response_data["latitude"] = linedata[1].strip()
                             elif "longitude" in linedata[0].lower():
-                                response_data['longitude'] = linedata[1].strip()
+                                response_data["longitude"] = linedata[1].strip()
                             else:
-                                response_data[linedata[0].strip().lower().replace(' ', '_')] = linedata[1].strip()
+                                response_data[linedata[0].strip().lower().replace(" ", "_")] = linedata[1].strip()
                     # Set the summary and response data
                     action_result.add_data(response_data)
-                    action_result.set_summary({'latitude': response_data['latitude'], 'longitude': response_data['longitude']})
+                    action_result.set_summary({"latitude": response_data["latitude"], "longitude": response_data["longitude"]})
 
                     # Set the Status
                     return action_result.set_status(phantom.APP_SUCCESS)
             else:
                 return action_result.set_status(phantom.APP_ERROR, response)
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Unable to execute geolocate domain. Error:{0}".format(e)), None
+            return action_result.set_status(phantom.APP_ERROR, f"Unable to execute geolocate domain. Error:{e}"), None
 
     def _reverse_domain(self, param):
-        """ Action handler for the '_reverse_domain' action"""
+        """Action handler for the '_reverse_domain' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -263,7 +265,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q': param.get('domain')}
+        request_params = {"q": param.get("domain")}
         endpoint = HACKERTARGET_REVERSEDNS_URI
 
         # Progress
@@ -284,30 +286,33 @@ class HackerTargetConnector(BaseConnector):
             if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw': response, 'domain_names': []}
-                response = response.strip().split('\n')
+                response_data = {"raw": response, "domain_names": []}
+                response = response.strip().split("\n")
                 tempresponse_data = {}
                 for line in response:
-                    line = re.sub(r'\s', ',', line)
-                    arr_list = line.split(',', 1)
+                    line = re.sub(r"\s", ",", line)
+                    arr_list = line.split(",", 1)
                     if len(arr_list) > 1:
                         domain_name = arr_list[0]
                         ip_addrs = arr_list[1]
                         if domain_name in tempresponse_data.keys():
-                            tempresponse_data[domain_name]['ip_addresses'].append(ip_addrs.split(','))
-                            tempresponse_data[domain_name]['ip_count'] += len(ip_addrs.split(','))
+                            tempresponse_data[domain_name]["ip_addresses"].append(ip_addrs.split(","))
+                            tempresponse_data[domain_name]["ip_count"] += len(ip_addrs.split(","))
                         else:
-                            tempresponse_data[domain_name] = {'domain': domain_name,
-                                'ip_addresses': ip_addrs.split(','), 'ip_count': len(ip_addrs.split(','))}
+                            tempresponse_data[domain_name] = {
+                                "domain": domain_name,
+                                "ip_addresses": ip_addrs.split(","),
+                                "ip_count": len(ip_addrs.split(",")),
+                            }
                     else:
-                        self.debug_print("Skipping current response line - {}".format(line))
+                        self.debug_print(f"Skipping current response line - {line}")
                 ip_count_total = 0
                 for domain_name in tempresponse_data.keys():
-                    response_data['domain_names'].append(tempresponse_data[domain_name])
-                    ip_count_total += tempresponse_data[domain_name]['ip_count']
+                    response_data["domain_names"].append(tempresponse_data[domain_name])
+                    ip_count_total += tempresponse_data[domain_name]["ip_count"]
                 # Set the summary and response data
                 action_result.add_data(response_data)
-                action_result.set_summary({'total_domains': len(tempresponse_data.keys()), 'total_ips': ip_count_total})
+                action_result.set_summary({"total_domains": len(tempresponse_data.keys()), "total_ips": ip_count_total})
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -315,7 +320,7 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, response)
 
     def _reverse_ip(self, param):
-        """ Action handler for the '_reverse_ip' action"""
+        """Action handler for the '_reverse_ip' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -325,7 +330,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q': param.get('ip')}
+        request_params = {"q": param.get("ip")}
         # endpoint = HACKERTARGET_REVERSEIP_URI - as of writing, reverse ip is busted, but can use reverse dns URI.
         endpoint = HACKERTARGET_REVERSEIP_URI
 
@@ -348,17 +353,17 @@ class HackerTargetConnector(BaseConnector):
             if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw': response, 'domain_names': []}
-                response = response.strip().split('\n')
+                response_data = {"raw": response, "domain_names": []}
+                response = response.strip().split("\n")
                 for line in response:
-                    response_data['domain_names'].append(line)
-                domain_count_total = len(response_data['domain_names'])
+                    response_data["domain_names"].append(line)
+                domain_count_total = len(response_data["domain_names"])
 
                 # Set the summary and response data
-                for domain in response_data['domain_names']:
-                    action_result.add_data({'domain': domain})
+                for domain in response_data["domain_names"]:
+                    action_result.add_data({"domain": domain})
 
-                action_result.set_summary({'total_domains': domain_count_total})
+                action_result.set_summary({"total_domains": domain_count_total})
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -366,7 +371,7 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, response)
 
     def _ping_host(self, param):
-        """ Action handler for the '_ping_host' action"""
+        """Action handler for the '_ping_host' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -385,10 +390,10 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        if param.get('domain'):
-            request_params = {'q': param.get('domain')}
+        if param.get("domain"):
+            request_params = {"q": param.get("domain")}
         else:
-            request_params = {'q': param.get('ip')}
+            request_params = {"q": param.get("ip")}
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -402,20 +407,21 @@ class HackerTargetConnector(BaseConnector):
             if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw': response}
-                response = response.split('\n')
+                response_data = {"raw": response}
+                response = response.split("\n")
                 for line in response:
                     if "Raw packets sent:" in line:
-                        linedata = line.strip().split('|')
+                        linedata = line.strip().split("|")
                         # self.debug_print('LINDATA: {}'.format(linedata))
-                        response_data['sent'] = linedata[0].split(':')[1].strip()
-                        response_data['succeeded'] = linedata[1].split(':')[1].strip()
-                        response_data['failed'] = linedata[2].split(':')[1].strip().split(' ')[0].strip()
+                        response_data["sent"] = linedata[0].split(":")[1].strip()
+                        response_data["succeeded"] = linedata[1].split(":")[1].strip()
+                        response_data["failed"] = linedata[2].split(":")[1].strip().split(" ")[0].strip()
 
                 # Set the summary and response data
                 action_result.add_data(response_data)
-                action_result.set_summary({'sent': response_data['sent'][0],
-                                          'received': response_data['succeeded'][0], 'failed': response_data['failed'][0]})
+                action_result.set_summary(
+                    {"sent": response_data["sent"][0], "received": response_data["succeeded"][0], "failed": response_data["failed"][0]}
+                )
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -423,7 +429,7 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, response)
 
     def _whois_ip(self, param):
-        """ Action handler for the 'whois ip' action"""
+        """Action handler for the 'whois ip' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -442,7 +448,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q': param.get('ip')}
+        request_params = {"q": param.get("ip")}
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -457,17 +463,17 @@ class HackerTargetConnector(BaseConnector):
             if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw': response}
-                response = response.strip().split('\n')
+                response_data = {"raw": response}
+                response = response.strip().split("\n")
                 for line in response:
-                    if line.startswith('#'):  # ignore comment line
+                    if line.startswith("#"):  # ignore comment line
                         continue
 
-                    line = line.split(':', 1)
+                    line = line.split(":", 1)
                     if len(line) > 1:  # check if array is empty or contains key-value content
-                        key = line[0].strip().replace(' ', '_')
+                        key = line[0].strip().replace(" ", "_")
                         if key in response_data:
-                            response_data[key] += ', ' + line[1].strip()
+                            response_data[key] += ", " + line[1].strip()
                         else:
                             response_data[key] = line[1].strip()
 
@@ -481,7 +487,7 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, response)
 
     def _whois_domain(self, param):
-        """ Action handler for the 'whois_domain' action"""
+        """Action handler for the 'whois_domain' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -500,7 +506,7 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q': param.get('domain')}
+        request_params = {"q": param.get("domain")}
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -515,23 +521,23 @@ class HackerTargetConnector(BaseConnector):
             if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw': response}
-                response = response.strip().split('\n')
+                response_data = {"raw": response}
+                response = response.strip().split("\n")
                 for line in response:
-                    if line.startswith('>>>'):
+                    if line.startswith(">>>"):
                         break
-                    line = line.split(':', 1)
+                    line = line.split(":", 1)
                     if len(line) > 1:  # check if array is empty or contains key-value content
-                        key = line[0].strip().replace(' ', '_')
+                        key = line[0].strip().replace(" ", "_")
                         if key in response_data:
-                            response_data[key] += ', ' + line[1].strip()
+                            response_data[key] += ", " + line[1].strip()
                         else:
                             response_data[key] = line[1].strip()
 
                 # Set the summary and response data
                 self.debug_print(response_data)
                 action_result.add_data(response_data)
-                action_result.set_summary({ 'Domain': response_data['Domain_Name']})
+                action_result.set_summary({"Domain": response_data["Domain_Name"]})
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -539,7 +545,7 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, response)
 
     def _get_http_headers(self, param):
-        """ Action handler for the 'get_http_headers' action"""
+        """Action handler for the 'get_http_headers' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -558,33 +564,33 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q': param.get('url')}
+        request_params = {"q": param.get("url")}
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
 
         if ret_val:
-            if 'error: ' in response:  # summary has been set to error per rest pull code, exit with success
+            if "error: " in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw': response}
-                response_headers = response.strip().split('HTTP/')[1:]
-                response_data['headers'] = []
+                response_data = {"raw": response}
+                response_headers = response.strip().split("HTTP/")[1:]
+                response_data["headers"] = []
                 for response2 in response_headers:
-                    response2 = response2.strip().split('\n')
+                    response2 = response2.strip().split("\n")
                     response_data_temp = {}
                     for line in response2:
                         if ": " in line:
-                            response_data_temp[line.split(': ', 1)[0].strip().replace(' ', '_')] = line.split(': ', 1)[1].strip()
-                        elif len(line.split(' ')) > 2:
-                            response_data_temp['http_version'] = line.split(' ')[0]
-                            response_data_temp['response_code'] = line.split(' ')[1]
-                    response_data['headers'].append(response_data_temp)
+                            response_data_temp[line.split(": ", 1)[0].strip().replace(" ", "_")] = line.split(": ", 1)[1].strip()
+                        elif len(line.split(" ")) > 2:
+                            response_data_temp["http_version"] = line.split(" ")[0]
+                            response_data_temp["response_code"] = line.split(" ")[1]
+                    response_data["headers"].append(response_data_temp)
 
                 # Set the summary and response data
                 action_result.add_data(response_data)
-                action_result.set_summary({'header_count': len(response_data['headers'])})
+                action_result.set_summary({"header_count": len(response_data["headers"])})
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -592,7 +598,7 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, response)
 
     def _get_http_links(self, param):
-        """ Action handler for the 'get_http_links' action"""
+        """Action handler for the 'get_http_links' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -611,26 +617,26 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        request_params = {'q': param.get('url')}
+        request_params = {"q": param.get("url")}
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
 
         if ret_val:
-            if 'error: ' in response:  # summary has been set to error per rest pull code, exit with success
+            if "error: " in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw': response}
-                response = response.strip().split('\n')
-                response_data['urls'] = []
+                response_data = {"raw": response}
+                response = response.strip().split("\n")
+                response_data["urls"] = []
                 for line in response:
                     if "http" in line:
-                        response_data['urls'].append({'url': line})
+                        response_data["urls"].append({"url": line})
 
                 # Set the summary and response data
                 action_result.add_data(response_data)
-                action_result.set_summary({'total_urls': len(response_data['urls'])})
+                action_result.set_summary({"total_urls": len(response_data["urls"])})
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -638,7 +644,7 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, response)
 
     def _traceroute_host(self, param):
-        """ Action handler for the 'run traceroute' action"""
+        """Action handler for the 'run traceroute' action"""
 
         # This is an action that needs to be represented by the ActionResult object
         # So create one and add it to 'self' (i.e. add it to the BaseConnector)
@@ -657,10 +663,10 @@ class HackerTargetConnector(BaseConnector):
 
         # parameters here
         # host - hostname; required.
-        if param.get('ip'):
-            request_params = {'q': param.get('ip')}
+        if param.get("ip"):
+            request_params = {"q": param.get("ip")}
         else:
-            request_params = {'q': param.get('domain')}
+            request_params = {"q": param.get("domain")}
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
@@ -674,27 +680,27 @@ class HackerTargetConnector(BaseConnector):
             if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {'raw': response, 'hop': {}}
-                response = response.split('\n')
+                response_data = {"raw": response, "hop": {}}
+                response = response.split("\n")
                 for line in response:
                     if "|--" in line:
                         linedata = " ".join(line.strip().split())
-                        lineno = linedata[0].split('.')[0]
-                        response_data['hop'][lineno] = {}
-                        response_data['hop'][lineno]['raw'] = linedata
-                        response_data['hop'][lineno]['host'] = response_data['hop'][lineno]['raw'].split(' ')[1]
-                        response_data['hop'][lineno]['loss'] = response_data['hop'][lineno]['raw'].split(' ')[2]
-                        response_data['hop'][lineno]['sent'] = response_data['hop'][lineno]['raw'].split(' ')[3]
-                        response_data['hop'][lineno]['last'] = response_data['hop'][lineno]['raw'].split(' ')[4]
-                        response_data['hop'][lineno]['avg'] = response_data['hop'][lineno]['raw'].split(' ')[5]
-                        response_data['hop'][lineno]['best'] = response_data['hop'][lineno]['raw'].split(' ')[6]
-                        response_data['hop'][lineno]['worst'] = response_data['hop'][lineno]['raw'].split(' ')[7]
-                        response_data['hop'][lineno]['stdev'] = response_data['hop'][lineno]['raw'].split(' ')[8]
-                        response_data['hop'][lineno]['hop'] = lineno
+                        lineno = linedata[0].split(".")[0]
+                        response_data["hop"][lineno] = {}
+                        response_data["hop"][lineno]["raw"] = linedata
+                        response_data["hop"][lineno]["host"] = response_data["hop"][lineno]["raw"].split(" ")[1]
+                        response_data["hop"][lineno]["loss"] = response_data["hop"][lineno]["raw"].split(" ")[2]
+                        response_data["hop"][lineno]["sent"] = response_data["hop"][lineno]["raw"].split(" ")[3]
+                        response_data["hop"][lineno]["last"] = response_data["hop"][lineno]["raw"].split(" ")[4]
+                        response_data["hop"][lineno]["avg"] = response_data["hop"][lineno]["raw"].split(" ")[5]
+                        response_data["hop"][lineno]["best"] = response_data["hop"][lineno]["raw"].split(" ")[6]
+                        response_data["hop"][lineno]["worst"] = response_data["hop"][lineno]["raw"].split(" ")[7]
+                        response_data["hop"][lineno]["stdev"] = response_data["hop"][lineno]["raw"].split(" ")[8]
+                        response_data["hop"][lineno]["hop"] = lineno
 
                 # Set the summary and response data
                 action_result.add_data(response_data)
-                action_result.set_summary({'total_hops': len(response_data['hop'])})
+                action_result.set_summary({"total_hops": len(response_data["hop"])})
 
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
@@ -761,7 +767,7 @@ class HackerTargetConnector(BaseConnector):
         return ret_val
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     """ Code that is executed when run in standalone debug mode
     for .e.g:
     python2.7 ./hackertarget.py /tmp/hackertarget.json
@@ -777,11 +783,10 @@ if __name__ == '__main__':
 
     # The first param is the input json file
     with open(sys.argv[1]) as f:
-
         # Load the input json file
         in_json = f.read()
         in_json = json.loads(in_json)
-        print(json.dumps(in_json, indent=' ' * 4))
+        print(json.dumps(in_json, indent=" " * 4))
 
         # Create the connector class object
         connector = HackerTargetConnector()
