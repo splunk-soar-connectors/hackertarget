@@ -708,25 +708,25 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, response)
 
     def _get_headers(self, param):
-        self._get_http_headers(param)
+        return self._get_http_headers(param)
 
     def _get_links(self, param):
-        self._get_http_links(param)
+        return self._get_http_links(param)
 
     def _traceroute_domain(self, param):
-        self._traceroute_host(param)
+        return self._traceroute_host(param)
 
     def _traceroute_ip(self, param):
-        self._traceroute_host(param)
+        return self._traceroute_host(param)
 
     def _ping_domain(self, param):
-        self._ping_host(param)
+        return self._ping_host(param)
 
     def _ping_ip(self, param):
-        self._ping_host(param)
+        return self._ping_host(param)
 
     def _geolocate_ip(self, param):
-        self._geolocate_domain(param)
+        return self._geolocate_domain(param)
 
     def handle_action(self, param):
         """Function that handles all the actions"""
