@@ -15,7 +15,7 @@
     "logo": "logo_hackertarget.svg",
     "logo_dark": "logo_hackertarget_dark.svg",
     "license": "Copyright (c) 2016-2025 Splunk Inc.",
-    "python_version": "3",
+    "python_version": "3.9, 3.13",
     "fips_compliant": true,
     "latest_tested_version": [
         "cloud, api/v1 tested on 23rd June, 2021"
@@ -3434,11 +3434,9 @@
         ]
     },
     "pip39_dependencies": {
-        "wheel": [
-            {
-                "module": "simplejson",
-                "input_file": "wheels/py39/simplejson-3.17.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
-            }
-        ]
+        "wheel": []
+    },
+    "pip313_dependencies": {
+        "wheel": []
     }
 }
