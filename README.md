@@ -1,9 +1,9 @@
 # HackerTarget
 
-Publisher: Splunk \
-Connector Version: 2.0.8 \
-Product Vendor: HackerTarget \
-Product Name: HackerTarget \
+Publisher: Splunk <br>
+Connector Version: 2.0.8 <br>
+Product Vendor: HackerTarget <br>
+Product Name: HackerTarget <br>
 Minimum Product Version: 5.1.0
 
 This app supports executing investigative actions to analyze a host
@@ -19,25 +19,25 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity \
-[get headers](#action-get-headers) - Get HTTP Headers from a URL \
-[get links](#action-get-links) - Get HTTP Links from a URL \
-[traceroute domain](#action-traceroute-domain) - Traceroute to a domain \
-[traceroute ip](#action-traceroute-ip) - Traceoute to an IP \
-[reverse domain](#action-reverse-domain) - Find IPs that resolve to this domain \
-[reverse ip](#action-reverse-ip) - Find domains that resolve to this IP \
-[whois ip](#action-whois-ip) - Execute a whois lookup on the given IP \
-[whois domain](#action-whois-domain) - Execute a whois lookup on the given domain \
-[ping domain](#action-ping-domain) - Ping a domain \
-[ping ip](#action-ping-ip) - Ping an IP \
-[geolocate ip](#action-geolocate-ip) - Geolocate an IP \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity <br>
+[get headers](#action-get-headers) - Get HTTP Headers from a URL <br>
+[get links](#action-get-links) - Get HTTP Links from a URL <br>
+[traceroute domain](#action-traceroute-domain) - Traceroute to a domain <br>
+[traceroute ip](#action-traceroute-ip) - Traceoute to an IP <br>
+[reverse domain](#action-reverse-domain) - Find IPs that resolve to this domain <br>
+[reverse ip](#action-reverse-ip) - Find domains that resolve to this IP <br>
+[whois ip](#action-whois-ip) - Execute a whois lookup on the given IP <br>
+[whois domain](#action-whois-domain) - Execute a whois lookup on the given domain <br>
+[ping domain](#action-ping-domain) - Ping a domain <br>
+[ping ip](#action-ping-ip) - Ping an IP <br>
+[geolocate ip](#action-geolocate-ip) - Geolocate an IP <br>
 [geolocate domain](#action-geolocate-domain) - Geolocate a domain
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -52,7 +52,7 @@ No Output
 
 Get HTTP Headers from a URL
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -114,7 +114,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get HTTP Links from a URL
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -140,7 +140,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Traceroute to a domain
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -245,7 +245,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Traceoute to an IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -370,7 +370,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Find IPs that resolve to this domain
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -402,7 +402,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Find domains that resolve to this IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -431,7 +431,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Execute a whois lookup on the given IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -491,7 +491,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Execute a whois lookup on the given domain
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -577,7 +577,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Ping a domain
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -608,7 +608,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Ping an IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -639,7 +639,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Geolocate an IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -672,7 +672,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Geolocate a domain
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
