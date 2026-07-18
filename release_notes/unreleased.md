@@ -1,3 +1,4 @@
 **Unreleased**
 
 * Removed captured cookie headers and raw HTTP responses from get-headers action results.
+* Reported HackerTarget quota, input, query, and result errors as action failures.

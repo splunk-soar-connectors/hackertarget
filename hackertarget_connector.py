@@ -167,12 +167,11 @@ class HackerTargetConnector(BaseConnector):
             return phantom.APP_ERROR, r.text
 
         if r.text:
-            if (
-                HACKERTARGET_INPUT_INVALID.lower() in r.text.lower()
-                or HACKERTARGET_NO_RESULTS.lower() in r.text.lower()
-                or HACKERTARGET_FAIL_ERR in r.text
-            ):
+            response_text = r.text.lower()
+            if any(error.lower() in response_text for error in API_HARD_ERRORS):
                 self.debug_print(f"FAILURE: Found in the app response.\nResponse: {r.text}")
+                return phantom.APP_ERROR, r.text
+            if HACKERTARGET_NO_RESULTS.lower() in response_text:
                 return phantom.APP_SUCCESS, r.text
 
         # Handle/process any errors that we get back from the device
@@ -279,7 +278,7 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -346,7 +345,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -400,7 +399,7 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -456,7 +455,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -514,7 +513,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -676,7 +675,7 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
