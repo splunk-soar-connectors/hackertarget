@@ -407,7 +407,7 @@ class HackerTargetConnector(BaseConnector):
             if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {"raw": response}
+                response_data = {}
                 response = response.split("\n")
                 for line in response:
                     if "Raw packets sent:" in line:
@@ -582,7 +582,10 @@ class HackerTargetConnector(BaseConnector):
                     response_data_temp = {}
                     for line in response2:
                         if ": " in line:
-                            response_data_temp[line.split(": ", 1)[0].strip().replace(" ", "_")] = line.split(": ", 1)[1].strip()
+                            header_name, header_value = line.split(": ", 1)
+                            if header_name.strip().lower() in {"cookie", "set-cookie", "set-cookie2"}:
+                                continue
+                            response_data_temp[header_name.strip().replace(" ", "_")] = header_value.strip()
                         elif len(line.split(" ")) > 2:
                             response_data_temp["http_version"] = line.split(" ")[0]
                             response_data_temp["response_code"] = line.split(" ")[1]
