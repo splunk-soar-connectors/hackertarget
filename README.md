@@ -80,7 +80,6 @@ action_result.data.\*.headers.\*.Last-Modified | string | | |
 action_result.data.\*.headers.\*.Location | string | `url` | |
 action_result.data.\*.headers.\*.P3P | string | | CP=This is not a P3P policy! See g.co/p3phelp for more info. |
 action_result.data.\*.headers.\*.Server | string | | gws |
-action_result.data.\*.headers.\*.Set-Cookie | string | | NID=158=HccET5f97JkzpL1ECD07_6PAgubd6rrnh_035wU92T_I21UT4OEGFcPhYog7JSFQ0Ob1TRCaajWLQ_96mELMVQMxj-2b6kY1yOfo9pX6t2oSv-1T1XzgtEgeFDSePBNskd1OCo_yfjzTaQdBTEYKR7kNRifN80NjxCv0mW4pW5I; expires=Fri, 02-Aug-2019 05:55:18 GMT; path=/; domain=.hackertarget.com; HttpOnly |
 action_result.data.\*.headers.\*.Strict-Transport-Security | string | | max-age=31536000 |
 action_result.data.\*.headers.\*.Transfer-Encoding | string | | chunked |
 action_result.data.\*.headers.\*.Vary | string | | Accept-Encoding |
@@ -89,22 +88,6 @@ action_result.data.\*.headers.\*.X-Frame-Options | string | | SAMEORIGIN |
 action_result.data.\*.headers.\*.X-XSS-Protection | string | | 1; mode=block |
 action_result.data.\*.headers.\*.http_version | string | | 1.1 |
 action_result.data.\*.headers.\*.response_code | string | | 200 |
-action_result.data.\*.raw | string | | HTTP/1.1 200 OK
-Date: Thu, 31 Jan 2019 05:55:18 GMT
-Expires: -1
-Cache-Control: private, max-age=0
-Content-Type: text/html; charset=UTF-8
-Strict-Transport-Security: max-age=31536000
-P3P: CP=This is not a P3P policy! See g.co/p3phelp for more info.
-Server: gws
-X-XSS-Protection: 1; mode=block
-X-Frame-Options: SAMEORIGIN
-Set-Cookie: 1P_JAR=2019-01-31-05; expires=Sat, 02-Mar-2019 05:55:18 GMT; path=/; domain=hackertarget.com
-Set-Cookie: NID=158=HccET5f97JkzpL1ECD07_6PAgubd6rrnh_035wU92T_I21UT4OEGFcPhYog7JSFQ0Ob1TRCaajWLQ_96mELMVQMxj-2b6kY1yOfo9pX6t2oSv-1T1XzgtEgeFDSePBNskd1OCo_yfjzTaQdBTEYKR7kNRifN80NjxCv0mW4pW5I; expires=Fri, 02-Aug-2019 05:55:18 GMT; path=/; domain=.hackertarget.com; HttpOnly
-Transfer-Encoding: chunked
-Alt-Svc: quic=:443; ma=2592000; v=44,43,39
-Accept-Ranges: none
-Vary: Accept-Encoding |
 action_result.summary.header_count | numeric | | 1 |
 action_result.message | string | | Header count: 1 |
 summary.total_objects | numeric | | 1 |
@@ -705,7 +688,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

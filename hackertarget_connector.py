@@ -1,6 +1,6 @@
 # File: hackertarget_connector.py
 #
-# Copyright (c) 2016-2025 Splunk Inc.
+# Copyright (c) 2016-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -167,12 +167,11 @@ class HackerTargetConnector(BaseConnector):
             return phantom.APP_ERROR, r.text
 
         if r.text:
-            if (
-                HACKERTARGET_INPUT_INVALID.lower() in r.text.lower()
-                or HACKERTARGET_NO_RESULTS.lower() in r.text.lower()
-                or HACKERTARGET_FAIL_ERR in r.text
-            ):
+            response_text = r.text.lower()
+            if any(error.lower() in response_text for error in API_HARD_ERRORS):
                 self.debug_print(f"FAILURE: Found in the app response.\nResponse: {r.text}")
+                return phantom.APP_ERROR, r.text
+            if HACKERTARGET_NO_RESULTS.lower() in response_text:
                 return phantom.APP_SUCCESS, r.text
 
         # Handle/process any errors that we get back from the device
@@ -279,7 +278,7 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -346,7 +345,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -400,14 +399,14 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
             if error:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {"raw": response}
+                response_data = {}
                 response = response.split("\n")
                 for line in response:
                     if "Raw packets sent:" in line:
@@ -456,7 +455,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -514,7 +513,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break
@@ -582,7 +581,10 @@ class HackerTargetConnector(BaseConnector):
                     response_data_temp = {}
                     for line in response2:
                         if ": " in line:
-                            response_data_temp[line.split(": ", 1)[0].strip().replace(" ", "_")] = line.split(": ", 1)[1].strip()
+                            header_name, header_value = line.split(": ", 1)
+                            if header_name.strip().lower() in {"cookie", "set-cookie", "set-cookie2"}:
+                                continue
+                            response_data_temp[header_name.strip().replace(" ", "_")] = header_value.strip()
                         elif len(line.split(" ")) > 2:
                             response_data_temp["http_version"] = line.split(" ")[0]
                             response_data_temp["response_code"] = line.split(" ")[1]
@@ -673,7 +675,7 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
         if ret_val:
             error = False
-            for err in API_ERR:
+            for err in API_NO_RESULTS:
                 if err in response:
                     error = True
                     break

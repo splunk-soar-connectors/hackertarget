@@ -14,7 +14,7 @@
     "min_phantom_version": "5.1.0",
     "logo": "logo_hackertarget.svg",
     "logo_dark": "logo_hackertarget_dark.svg",
-    "license": "Copyright (c) 2016-2025 Splunk Inc.",
+    "license": "Copyright (c) 2016-2026 Splunk Inc.",
     "python_version": "3.9, 3.13",
     "fips_compliant": true,
     "latest_tested_version": [
@@ -183,13 +183,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.headers.*.Set-Cookie",
-                    "data_type": "string",
-                    "example_values": [
-                        "NID=158=HccET5f97JkzpL1ECD07_6PAgubd6rrnh_035wU92T_I21UT4OEGFcPhYog7JSFQ0Ob1TRCaajWLQ_96mELMVQMxj-2b6kY1yOfo9pX6t2oSv-1T1XzgtEgeFDSePBNskd1OCo_yfjzTaQdBTEYKR7kNRifN80NjxCv0mW4pW5I; expires=Fri, 02-Aug-2019 05:55:18 GMT; path=/; domain=.hackertarget.com; HttpOnly"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.headers.*.Strict-Transport-Security",
                     "data_type": "string",
                     "column_name": "Strict Tsec",
@@ -253,13 +246,6 @@
                     "column_order": 2,
                     "example_values": [
                         "200"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.raw",
-                    "data_type": "string",
-                    "example_values": [
-                        "HTTP/1.1 200 OK\r\nDate: Thu, 31 Jan 2019 05:55:18 GMT\r\nExpires: -1\r\nCache-Control: private, max-age=0\r\nContent-Type: text/html; charset=UTF-8\r\nStrict-Transport-Security: max-age=31536000\r\nP3P: CP=This is not a P3P policy! See g.co/p3phelp for more info.\r\nServer: gws\r\nX-XSS-Protection: 1; mode=block\r\nX-Frame-Options: SAMEORIGIN\r\nSet-Cookie: 1P_JAR=2019-01-31-05; expires=Sat, 02-Mar-2019 05:55:18 GMT; path=/; domain=hackertarget.com\r\nSet-Cookie: NID=158=HccET5f97JkzpL1ECD07_6PAgubd6rrnh_035wU92T_I21UT4OEGFcPhYog7JSFQ0Ob1TRCaajWLQ_96mELMVQMxj-2b6kY1yOfo9pX6t2oSv-1T1XzgtEgeFDSePBNskd1OCo_yfjzTaQdBTEYKR7kNRifN80NjxCv0mW4pW5I; expires=Fri, 02-Aug-2019 05:55:18 GMT; path=/; domain=.hackertarget.com; HttpOnly\r\nTransfer-Encoding: chunked\r\nAlt-Svc: quic=:443; ma=2592000; v=44,43,39\r\nAccept-Ranges: none\r\nVary: Accept-Encoding\r\n\r\n"
                     ]
                 },
                 {
