@@ -37,28 +37,29 @@ def _contains_header_service_error(response):
 def _parse_http_header_response(response):
     """Parse response blocks while excluding cookie-bearing fields."""
     parsed_headers = []
-    for response_block in response.strip().split("HTTP/")[1:]:
-        lines = response_block.strip().splitlines()
-        if not lines:
+    response_data = None
+    for line in response.splitlines():
+        status_match = re.fullmatch(r"HTTP/(\S+)\s+(\d{3})(?:\s+.*)?", line)
+        if status_match:
+            if response_data is not None:
+                parsed_headers.append(response_data)
+            response_data = {
+                "http_version": status_match.group(1),
+                "response_code": status_match.group(2),
+            }
             continue
 
-        status_match = re.fullmatch(r"(\S+)\s+(\d{3})(?:\s+.*)?", lines[0].strip())
-        if not status_match:
+        # Never reinterpret folded header content as a new response header.
+        if response_data is None or line[:1].isspace() or ":" not in line:
             continue
 
-        response_data = {
-            "http_version": status_match.group(1),
-            "response_code": status_match.group(2),
-        }
-        for line in lines[1:]:
-            if ":" not in line:
-                continue
-            header_name, header_value = line.split(":", 1)
-            normalized_name = header_name.strip().lower()
-            if normalized_name in {"cookie", "set-cookie", "set-cookie2"}:
-                continue
-            response_data[header_name.strip().replace(" ", "_")] = header_value.strip()
+        header_name, header_value = line.split(":", 1)
+        normalized_name = header_name.strip().lower()
+        if normalized_name in {"cookie", "set-cookie", "set-cookie2"}:
+            continue
+        response_data[header_name.strip().replace(" ", "_")] = header_value.strip()
 
+    if response_data is not None:
         parsed_headers.append(response_data)
 
     return parsed_headers
@@ -149,7 +150,7 @@ class HackerTargetConnector(BaseConnector):
         # Set the status of the connector result
         return self.set_status_save_progress(phantom.APP_SUCCESS, SUCC_CONNECTIVITY_TEST)
 
-    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
+    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get", redact_response=False):
         """Function that makes the REST call to the device, generic function that can be called from various action handlers"""
 
         if headers is None:
@@ -198,12 +199,18 @@ class HackerTargetConnector(BaseConnector):
                 retry_count -= 1
 
         if phantom.is_fail(r.status_code) or r.text is False or r.text == HACKERTARGET_INVALID_KEY:
+            if redact_response:
+                self.debug_print("FAILURE: Found in the app response; response body omitted")
+                return phantom.APP_ERROR, None
             self.debug_print(f"FAILURE: Found in the app response.\nResponse: {r.text}")
             return phantom.APP_ERROR, r.text
 
         if r.text:
             response_text = r.text.lower()
             if any(error.lower() in response_text for error in API_HARD_ERRORS):
+                if redact_response:
+                    self.debug_print("FAILURE: Found in the app response; response body omitted")
+                    return phantom.APP_ERROR, None
                 self.debug_print(f"FAILURE: Found in the app response.\nResponse: {r.text}")
                 return phantom.APP_ERROR, r.text
             if HACKERTARGET_NO_RESULTS.lower() in response_text:
@@ -220,7 +227,10 @@ class HackerTargetConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, message), None
 
         # Failure
-        return action_result.set_status(phantom.APP_ERROR, ERR_FROM_SERVER.format(status=r.status_code, detail=r.text.encode("utf-8"))), None
+        return action_result.set_status(
+            phantom.APP_ERROR,
+            ERR_FROM_SERVER.format(status=r.status_code, detail="Response body omitted"),
+        ), None
 
     def _geolocate_domain(self, param):
         """Action handler for the '_ping_host' action"""
@@ -602,7 +612,7 @@ class HackerTargetConnector(BaseConnector):
 
         # Make the rest call, note that if we try for cached and its not there, it will automatically go to start a new analysis.
         # unless specified start a new as above.
-        ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
+        ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params, redact_response=True)
 
         if ret_val:
             if _contains_header_service_error(response):

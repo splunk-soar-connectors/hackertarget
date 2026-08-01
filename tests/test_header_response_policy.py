@@ -45,6 +45,12 @@ class HeaderResponsePolicyTests(unittest.TestCase):
         self.assertNotIn("set_status(phantom.APP_ERROR, response)", handler_source)
         self.assertIn('set_status(phantom.APP_ERROR, "Header service returned an error")', handler_source)
         self.assertIn('set_status(phantom.APP_ERROR, "Header service request failed")', handler_source)
+        self.assertIn("redact_response=True", handler_source)
+
+        helper = next(node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef) and node.name == "_make_rest_call")
+        for call in (node for node in ast.walk(helper) if isinstance(node, ast.Call)):
+            if isinstance(call.func, ast.Attribute) and call.func.attr == "set_status":
+                self.assertNotIn("r.text", ast.get_source_segment(source, call))
 
     def test_cookie_headers_are_removed_with_or_without_whitespace(self):
         response = "\n".join(
@@ -69,6 +75,45 @@ class HeaderResponsePolicyTests(unittest.TestCase):
             self.parse_headers(response),
             [{"http_version": "1.1", "response_code": "200", "X-Test": "value"}],
         )
+
+    def test_embedded_http_text_in_cookie_content_cannot_start_a_response(self):
+        cases = (
+            (
+                "HTTP/1.1 200 OK\nSet-Cookie: sid=prefixHTTP/leaked 200 OK\nX-Test:value",
+                {"http_version": "1.1", "response_code": "200", "X-Test": "value"},
+            ),
+            (
+                "HTTP/1.1 200 OK\nSet-Cookie: sid=prefix\n HTTP/leaked 200 OK\n X-Leaked: secret",
+                {"http_version": "1.1", "response_code": "200"},
+            ),
+            (
+                "HTTP/1.1 200 OK\nX-Test: prefixHTTP/leaked 200 OK",
+                {"http_version": "1.1", "response_code": "200", "X-Test": "prefixHTTP/leaked 200 OK"},
+            ),
+        )
+        for response, expected in cases:
+            with self.subTest(response=response):
+                self.assertEqual(self.parse_headers(response), [expected])
+
+    def test_multiple_real_response_blocks_support_lf_and_crlf(self):
+        for separator in ("\n", "\r\n"):
+            response = separator.join(
+                (
+                    "HTTP/1.1 301 Moved",
+                    "Location: https://example.invalid",
+                    "Set-Cookie: first=secret",
+                    "HTTP/2 200 OK",
+                    "Content-Type: text/plain",
+                )
+            )
+            with self.subTest(separator=repr(separator)):
+                self.assertEqual(
+                    self.parse_headers(response),
+                    [
+                        {"http_version": "1.1", "response_code": "301", "Location": "https://example.invalid"},
+                        {"http_version": "2", "response_code": "200", "Content-Type": "text/plain"},
+                    ],
+                )
 
     def test_service_error_detection_is_case_and_spacing_insensitive(self):
         for response in ("error: denied", "ERROR : denied", "HTTP/1.1 200 OK\nError: denied"):
