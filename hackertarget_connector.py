@@ -571,7 +571,7 @@ class HackerTargetConnector(BaseConnector):
 
         if ret_val:
             if "error: " in response:  # summary has been set to error per rest pull code, exit with success
-                return action_result.set_status(phantom.APP_SUCCESS, response)
+                return action_result.set_status(phantom.APP_ERROR, "Header service returned an error")
             else:
                 response_data = {"headers": []}
                 response_headers = response.strip().split("HTTP/")[1:]
