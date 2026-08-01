@@ -596,7 +596,7 @@ class HackerTargetConnector(BaseConnector):
                 # Set the Status
                 return action_result.set_status(phantom.APP_SUCCESS)
         else:
-            return action_result.set_status(phantom.APP_ERROR, response)
+            return action_result.set_status(phantom.APP_ERROR, "Header service request failed")
 
     def _get_http_links(self, param):
         """Action handler for the 'get_http_links' action"""

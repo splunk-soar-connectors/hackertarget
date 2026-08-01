@@ -27,7 +27,9 @@ class HeaderResponsePolicyTests(unittest.TestCase):
         handler_source = ast.get_source_segment(source, handler)
 
         self.assertNotIn("set_status(phantom.APP_SUCCESS, response)", handler_source)
+        self.assertNotIn("set_status(phantom.APP_ERROR, response)", handler_source)
         self.assertIn('set_status(phantom.APP_ERROR, "Header service returned an error")', handler_source)
+        self.assertIn('set_status(phantom.APP_ERROR, "Header service request failed")', handler_source)
 
 
 if __name__ == "__main__":
