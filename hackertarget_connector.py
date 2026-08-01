@@ -573,9 +573,8 @@ class HackerTargetConnector(BaseConnector):
             if "error: " in response:  # summary has been set to error per rest pull code, exit with success
                 return action_result.set_status(phantom.APP_SUCCESS, response)
             else:
-                response_data = {"raw": response}
+                response_data = {"headers": []}
                 response_headers = response.strip().split("HTTP/")[1:]
-                response_data["headers"] = []
                 for response2 in response_headers:
                     response2 = response2.strip().split("\n")
                     response_data_temp = {}
