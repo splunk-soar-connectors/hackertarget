@@ -29,6 +29,41 @@ from phantom.base_connector import BaseConnector
 from hackertarget_consts import *
 
 
+def _contains_header_service_error(response):
+    """Recognize service error records without persisting their upstream text."""
+    return bool(re.search(r"(?im)^\s*error\s*:", response))
+
+
+def _parse_http_header_response(response):
+    """Parse response blocks while excluding cookie-bearing fields."""
+    parsed_headers = []
+    for response_block in response.strip().split("HTTP/")[1:]:
+        lines = response_block.strip().splitlines()
+        if not lines:
+            continue
+
+        status_match = re.fullmatch(r"(\S+)\s+(\d{3})(?:\s+.*)?", lines[0].strip())
+        if not status_match:
+            continue
+
+        response_data = {
+            "http_version": status_match.group(1),
+            "response_code": status_match.group(2),
+        }
+        for line in lines[1:]:
+            if ":" not in line:
+                continue
+            header_name, header_value = line.split(":", 1)
+            normalized_name = header_name.strip().lower()
+            if normalized_name in {"cookie", "set-cookie", "set-cookie2"}:
+                continue
+            response_data[header_name.strip().replace(" ", "_")] = header_value.strip()
+
+        parsed_headers.append(response_data)
+
+    return parsed_headers
+
+
 class HackerTargetConnector(BaseConnector):
     # actions supported by this script
     ACTION_ID_TRACEROUTE_IP = "traceroute_ip"
@@ -570,24 +605,10 @@ class HackerTargetConnector(BaseConnector):
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params)
 
         if ret_val:
-            if "error: " in response:  # summary has been set to error per rest pull code, exit with success
+            if _contains_header_service_error(response):
                 return action_result.set_status(phantom.APP_ERROR, "Header service returned an error")
             else:
-                response_data = {"headers": []}
-                response_headers = response.strip().split("HTTP/")[1:]
-                for response2 in response_headers:
-                    response2 = response2.strip().split("\n")
-                    response_data_temp = {}
-                    for line in response2:
-                        if ": " in line:
-                            header_name, header_value = line.split(": ", 1)
-                            if header_name.strip().lower() in {"cookie", "set-cookie", "set-cookie2"}:
-                                continue
-                            response_data_temp[header_name.strip().replace(" ", "_")] = header_value.strip()
-                        elif len(line.split(" ")) > 2:
-                            response_data_temp["http_version"] = line.split(" ")[0]
-                            response_data_temp["response_code"] = line.split(" ")[1]
-                    response_data["headers"].append(response_data_temp)
+                response_data = {"headers": _parse_http_header_response(response)}
 
                 # Set the summary and response data
                 action_result.add_data(response_data)

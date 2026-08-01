@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import ast
+import re
 import unittest
 from pathlib import Path
 
@@ -20,6 +21,20 @@ CONNECTOR = Path(__file__).resolve().parents[1] / "hackertarget_connector.py"
 
 
 class HeaderResponsePolicyTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        source = CONNECTOR.read_text()
+        tree = ast.parse(source)
+        helpers = [
+            node
+            for node in tree.body
+            if isinstance(node, ast.FunctionDef) and node.name in {"_contains_header_service_error", "_parse_http_header_response"}
+        ]
+        namespace = {"re": re}
+        exec(compile(ast.fix_missing_locations(ast.Module(body=helpers, type_ignores=[])), str(CONNECTOR), "exec"), namespace)
+        cls.contains_error = staticmethod(namespace["_contains_header_service_error"])
+        cls.parse_headers = staticmethod(namespace["_parse_http_header_response"])
+
     def test_header_action_never_persists_raw_response_in_status(self):
         source = CONNECTOR.read_text()
         tree = ast.parse(source)
@@ -30,6 +45,35 @@ class HeaderResponsePolicyTests(unittest.TestCase):
         self.assertNotIn("set_status(phantom.APP_ERROR, response)", handler_source)
         self.assertIn('set_status(phantom.APP_ERROR, "Header service returned an error")', handler_source)
         self.assertIn('set_status(phantom.APP_ERROR, "Header service request failed")', handler_source)
+
+    def test_cookie_headers_are_removed_with_or_without_whitespace(self):
+        response = "\n".join(
+            (
+                "HTTP/1.1 200 OK",
+                "Set-Cookie:session=secret Path=/ Secure",
+                "cOoKiE : session=second",
+                "SET-COOKIE2:\tlegacy=third",
+                "Content-Type: text/plain",
+            )
+        )
+
+        self.assertEqual(
+            self.parse_headers(response),
+            [{"http_version": "1.1", "response_code": "200", "Content-Type": "text/plain"}],
+        )
+
+    def test_only_http_status_lines_populate_status_fields(self):
+        response = "HTTP/1.1 200 OK\nMalformed secret-bearing text with spaces\nX-Test:value"
+
+        self.assertEqual(
+            self.parse_headers(response),
+            [{"http_version": "1.1", "response_code": "200", "X-Test": "value"}],
+        )
+
+    def test_service_error_detection_is_case_and_spacing_insensitive(self):
+        for response in ("error: denied", "ERROR : denied", "HTTP/1.1 200 OK\nError: denied"):
+            with self.subTest(response=response):
+                self.assertTrue(self.contains_error(response))
 
 
 if __name__ == "__main__":
