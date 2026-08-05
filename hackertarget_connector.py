@@ -614,20 +614,20 @@ class HackerTargetConnector(BaseConnector):
         # unless specified start a new as above.
         ret_val, response = self._make_rest_call(endpoint, action_result, params=request_params, redact_response=True)
 
-        if ret_val:
-            if _contains_header_service_error(response):
-                return action_result.set_status(phantom.APP_ERROR, "Header service returned an error")
-            else:
-                response_data = {"headers": _parse_http_header_response(response)}
-
-                # Set the summary and response data
-                action_result.add_data(response_data)
-                action_result.set_summary({"header_count": len(response_data["headers"])})
-
-                # Set the Status
-                return action_result.set_status(phantom.APP_SUCCESS)
-        else:
+        if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, "Header service request failed")
+
+        if _contains_header_service_error(response):
+            return action_result.set_status(phantom.APP_ERROR, "Header service returned an error")
+
+        response_data = {"headers": _parse_http_header_response(response)}
+
+        # Set the summary and response data
+        action_result.add_data(response_data)
+        action_result.set_summary({"header_count": len(response_data["headers"])})
+
+        # Set the Status
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_http_links(self, param):
         """Action handler for the 'get_http_links' action"""
